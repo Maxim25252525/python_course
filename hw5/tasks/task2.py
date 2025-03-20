@@ -20,3 +20,31 @@
 > Для того, чтобы понять, какое из чисел больше или меньше можно
 воспользоваться функциями max() и min() соответственно.
 """
+
+
+def summarize(a, b):
+    return a + b
+
+
+def subtract(a, b):
+    return max(a, b) - min(a, b)
+
+
+def multiply(a, b):
+    return a * b
+
+
+def divide(a, b):
+    try:
+        return max(a, b) / min(a, b)
+    except ZeroDivisionError:
+        return "Деление на 0 невозможно."
+
+
+if __name__ == '__main__':
+    first_number = int(input("Введите первое число: "))
+    second_number = int(input("Введите второе число: "))
+    print(summarize(first_number, second_number))
+    print(subtract(first_number, second_number))
+    print(multiply(first_number, second_number))
+    print(divide(first_number, second_number))

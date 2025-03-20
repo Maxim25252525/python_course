@@ -38,7 +38,7 @@ def divide(a, b):
     try:
         return max(a, b) / min(a, b)
     except ZeroDivisionError:
-        return "Деление на 0 невозможно."
+        raise ZeroDivisionError("Деление на 0 невозможно.")
 
 
 if __name__ == '__main__':

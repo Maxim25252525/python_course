@@ -18,3 +18,14 @@
 
 Дополнительно напишите тесты к задаче.
 """
+
+
+def get_answer(string):
+    if "маруся" in string.lower():
+        return "Мяу..."
+    return "..."
+
+
+if __name__ == '__main__':
+    my_string = input("Введите строку: ")
+    print(get_answer(my_string))

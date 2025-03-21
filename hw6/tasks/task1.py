@@ -27,3 +27,54 @@
 Добавьте докстринги (описание функций) и аннотации типов (указание типов
 параметров и возвращаемых значений) для каждой функции.
 """
+
+
+def get_central_element(numbers: list) -> int | tuple:
+    """Функция возвращает центральный элемент списка.
+
+    Args:
+        numbers: список целых чисел
+
+    Returns:
+        int | tuple:
+            int - если количество элементов в списке нечетное,
+            tuple - если количество элементов в списке четное.
+    """
+
+    central_index = int(len(numbers) / 2)
+    if len(numbers) % 2 == 0:
+        return numbers[central_index - 1], numbers[central_index]
+    return numbers[central_index]
+
+
+def get_latest_sorted_items(numbers: list) -> tuple[int, int]:
+    """Функция возвращает два последних элемента отсортированного по возрастанию списка.
+
+    Args:
+        numbers: список целых чисел
+
+    Returns:
+        tuple[int, int]: два последних элемента отсортированного по возрастанию списка.
+    """
+
+    sorted(numbers)
+    return numbers[-1], numbers[-2]
+
+
+def check_hundred(numbers: list) -> str:
+    """Функция проверяет список на наличие элементов 100 и -100.
+
+    Args:
+        numbers: список целых чисел
+
+    Returns:
+        str: YES - если список содержит элементы 100 и -100, NO - иначе.
+    """
+    return "YES" if -100 in numbers and 100 in numbers else "NO"
+
+
+if __name__ == "__main__":
+    my_numbers = list(map(int, input("Введите числа через пробел: ").split()))
+    print(get_central_element(my_numbers))
+    print(get_latest_sorted_items(my_numbers))
+    print(check_hundred(my_numbers))

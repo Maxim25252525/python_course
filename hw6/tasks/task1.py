@@ -29,7 +29,7 @@
 """
 
 
-def get_central_element(numbers: list) -> int | tuple:
+def get_central_element(numbers: list[int]) -> int | tuple:
     """Функция возвращает центральный элемент списка.
 
     Args:
@@ -47,7 +47,7 @@ def get_central_element(numbers: list) -> int | tuple:
     return numbers[central_index]
 
 
-def get_latest_sorted_items(numbers: list) -> tuple[int, int]:
+def get_latest_sorted_items(numbers: list[int]) -> tuple[int, int]:
     """Функция возвращает два последних элемента отсортированного по возрастанию списка.
 
     Args:
@@ -61,7 +61,7 @@ def get_latest_sorted_items(numbers: list) -> tuple[int, int]:
     return numbers[-1], numbers[-2]
 
 
-def check_hundred(numbers: list) -> str:
+def check_hundred(numbers: list[int]) -> str:
     """Функция проверяет список на наличие элементов 100 и -100.
 
     Args:

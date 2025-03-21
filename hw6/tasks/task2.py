@@ -31,3 +31,25 @@ Output:
 25 27
 ```
 """
+
+
+def filter_numbers(numbers: list[int]) -> tuple:
+    """Функция отбирает числа, которые больше 22 и меньше 30 или равны 12.
+
+    Args:
+         numbers - список целых чисел.
+
+    Returns:
+         tuple: кортеж из первого и последнего отобранных чисел.
+    """
+
+    result = []
+    for item in numbers:
+        if (22 < item < 30) or item == 12:
+            result.append(item)
+    return result[0], result[-1]
+
+
+if __name__ == '__main__':
+    my_numbers = list(map(int, input("Введите числа через пробел: ").split()))
+    print(*filter_numbers(my_numbers))

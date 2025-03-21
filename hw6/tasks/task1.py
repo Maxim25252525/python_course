@@ -29,7 +29,7 @@
 """
 
 
-def get_central_element(numbers: list[int]) -> int | tuple:
+def get_central_element(numbers: list[int]) -> int | tuple[int, int]:
     """Функция возвращает центральный элемент списка.
 
     Args:
@@ -57,8 +57,8 @@ def get_latest_sorted_items(numbers: list[int]) -> tuple[int, int]:
         tuple[int, int]: два последних элемента отсортированного по возрастанию списка.
     """
 
-    sorted(numbers)
-    return numbers[-1], numbers[-2]
+    numbers = sorted(numbers)
+    return numbers[-2], numbers[-1]
 
 
 def check_hundred(numbers: list[int]) -> str:
@@ -70,11 +70,15 @@ def check_hundred(numbers: list[int]) -> str:
     Returns:
         str: YES - если список содержит элементы 100 и -100, NO - иначе.
     """
+
     return "YES" if -100 in numbers and 100 in numbers else "NO"
 
 
 if __name__ == "__main__":
     my_numbers = list(map(int, input("Введите числа через пробел: ").split()))
-    print(get_central_element(my_numbers))
-    print(get_latest_sorted_items(my_numbers))
+    if get_central_element(my_numbers) == tuple:
+        print(*get_central_element(my_numbers))
+    else:
+        print(get_central_element(my_numbers))
+    print(*get_latest_sorted_items(my_numbers))
     print(check_hundred(my_numbers))

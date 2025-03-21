@@ -86,9 +86,9 @@ def encrypt(text: str) -> str:
 
 
 if __name__ == '__main__':
-    text = input("Введите текст: ")
-    decrypted_text = decrypt(text)
+    my_text = input("Введите текст: ")
+    decrypted_text = decrypt(my_text)
     print(decrypted_text)
     encrypted_text = encrypt(decrypted_text)
     print(encrypted_text)
-    assert text == encrypted_text
+    assert my_text == encrypted_text

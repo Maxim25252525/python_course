@@ -41,3 +41,54 @@
 Добавьте докстринг (описание функции) и аннотацию типов (указание типов
 параметров и возвращаемых значений) для функций.
 """
+
+
+def decrypt(text: str) -> str:
+    """
+    Расшифровывает текст на понятный язык.
+
+    Args:
+        text: расшифровываемый текст
+
+    Returns:
+        Расшифрованный текст
+    """
+
+    words = text.split()
+    for i, word in enumerate(words):
+        if word[-1].isalpha() is False:
+            words[i] = word[:-4] + word[-1]
+        else:
+            words[i] = word[:-3]
+
+    return ' '.join(words)
+
+
+def encrypt(text: str) -> str:
+    """
+    Шифрует текст на язык Тофслы и Вифслы
+
+    Args:
+        text: зашифровываемый текст
+
+    Returns:
+        Зашифрованный текст
+    """
+
+    words = text.split()
+    for i, word in enumerate(words):
+        if word[-1].isalpha() is False:
+            words[i] = word.replace(word[-1], f"сла{word[-1]}")
+        else:
+            words[i] = word + "сла"
+
+    return ' '.join(words)
+
+
+if __name__ == '__main__':
+    text = input("Введите текст: ")
+    decrypted_text = decrypt(text)
+    print(decrypted_text)
+    encrypted_text = encrypt(decrypted_text)
+    print(encrypted_text)
+    assert text == encrypted_text

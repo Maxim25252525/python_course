@@ -54,7 +54,8 @@ Output:
 
 
 def search_word(word: str, text: str) -> list[tuple[int, str]]:
-    """Функция находит заданное слово в тексте и возвращает предложение, в котором оно встречается
+    """Функция находит заданное слово в тексте и возвращает предложение,
+    в котором оно встречается
 
     Args:
         word: Слово для поиска
@@ -65,14 +66,14 @@ def search_word(word: str, text: str) -> list[tuple[int, str]]:
     """
 
     suitable_sentences = []
-    for i, sentence in enumerate(text.split('.')):
+    for i, sentence in enumerate(text.split(".")):
         if word.lower() in sentence.lower():
             suitable_sentences.append((i + 1, sentence.strip()))
 
     return suitable_sentences
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     my_word, my_text = input(), input()
     for item in search_word(my_word, my_text):
-        print(f'{item[0]}: {item[1]}')
+        print(f"{item[0]}: {item[1]}")

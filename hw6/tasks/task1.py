@@ -48,13 +48,15 @@ def get_central_element(numbers: list[int]) -> int | tuple[int, int]:
 
 
 def get_latest_sorted_items(numbers: list[int]) -> tuple[int, int]:
-    """Функция возвращает два последних элемента отсортированного по возрастанию списка.
+    """Функция возвращает два последних элемента
+    отсортированного по возрастанию списка.
 
     Args:
         numbers: список целых чисел
 
     Returns:
-        tuple[int, int]: два последних элемента отсортированного по возрастанию списка.
+        tuple[int, int]:
+        два последних элемента отсортированного по возрастанию списка.
     """
 
     numbers = sorted(numbers)

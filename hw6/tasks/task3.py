@@ -61,7 +61,7 @@ def decrypt(text: str) -> str:
         else:
             words[i] = word[:-3]
 
-    return ' '.join(words)
+    return " ".join(words)
 
 
 def encrypt(text: str) -> str:
@@ -82,10 +82,10 @@ def encrypt(text: str) -> str:
         else:
             words[i] = word + "сла"
 
-    return ' '.join(words)
+    return " ".join(words)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     my_text = input("Введите текст: ")
     decrypted_text = decrypt(my_text)
     print(decrypted_text)

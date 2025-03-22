@@ -50,6 +50,6 @@ def filter_numbers(numbers: list[int]) -> tuple:
     return result[0], result[-1]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     my_numbers = list(map(int, input("Введите числа через пробел: ").split()))
     print(*filter_numbers(my_numbers))

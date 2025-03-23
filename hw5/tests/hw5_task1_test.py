@@ -1,25 +1,15 @@
-#  Функции для тестирования
-def is_tutor_in_string():
-    string = "Сегодня Данил или Антон проверил мою работу"
-    return "Данил" in string or "Антон" in string
+from hw5.tasks.task1 import get_answer
 
 
-def min_length_of_string():
-    return len("ММММмаруСя") >= len("Маруся")
+def test_get_answer_with_marusya():
+    assert get_answer("frggrrgМАруСяfedd") == "Мяу..."
 
 
-def is_string():
-    return isinstance("Маруся", str)
+def test_get_answer_without_marusya():
+    assert get_answer("feffegовва") == "..."
 
 
-# Тестирование
-def test_is_tutor_in_string():
-    assert is_tutor_in_string()
-
-
-def test_min_length_of_string():
-    assert min_length_of_string()
-
-
-def test_is_string():
-    assert is_string()
+# строка содержит слово "Маруся",
+# но 'a', 'p', 'y', 'с' в обоих регистрах или 'M' могут быть написаны не по-русски
+def test_get_answer_with_marusya_in_english():
+    assert get_answer("Мaруcя") == "..."

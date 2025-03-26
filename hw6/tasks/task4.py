@@ -58,7 +58,7 @@ def search_word(word: str, text: str) -> list[tuple[int, str]]:
     в котором оно встречается.
 
     Args:
-        word: Слово для поиска
+        word: Слово для поиска.
         text: Текст, в котором будет происходить поиск.
 
     Returns:

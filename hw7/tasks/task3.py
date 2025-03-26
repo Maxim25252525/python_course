@@ -40,3 +40,27 @@ Output:
 Среднее значение температуры: 20.54
 ```
 """
+
+
+def create_weather_report(temperatures: list[float]) -> dict[str: set | float]:
+    """Функция создает отчет о погоде и вычисляет среднюю температуру.
+
+    Args:
+        temperatures: Список температур.
+
+    Returns:
+        Возвращает словарь, который содержит
+        отчет о погоде и среднюю температуру.
+    """
+
+    return {
+        "unique_degrees": set(temperatures),
+        "average_temperature": round(sum(temperatures) / len(temperatures), 2)
+    }
+
+
+if __name__ == "__main__":
+    my_temperatures = list(map(float, input("Введите числа через пробел: ").split()))
+    weather_report = create_weather_report(my_temperatures)
+    print(f"Отчет о температуре: {" ".join(map(str, weather_report["unique_degrees"]))}\n"
+          f"Среднее значение температуры: {weather_report["average_temperature"]}")

@@ -33,14 +33,14 @@ Output:
 """
 
 
-def filter_numbers(numbers: list[int]) -> tuple:
+def filter_numbers(numbers: list[int]) -> tuple[int, int]:
     """Функция отбирает числа, которые больше 22 и меньше 30 или равны 12.
 
     Args:
-         numbers - список целых чисел.
+         numbers: Список целых чисел.
 
     Returns:
-         tuple: кортеж из первого и последнего отобранных чисел.
+         Кортеж из первого и последнего отобранных чисел.
     """
 
     result = []

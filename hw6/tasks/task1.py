@@ -33,12 +33,10 @@ def get_central_element(numbers: list[int]) -> int | tuple[int, int]:
     """Функция возвращает центральный элемент списка.
 
     Args:
-        numbers: список целых чисел
+        numbers: Список целых чисел.
 
     Returns:
-        int | tuple:
-            int - если количество элементов в списке нечетное,
-            tuple - если количество элементов в списке четное.
+        Центральные элементы в зависимости от длины списка.
     """
 
     central_index = int(len(numbers) / 2)
@@ -52,11 +50,10 @@ def get_latest_sorted_items(numbers: list[int]) -> tuple[int, int]:
     отсортированного по возрастанию списка.
 
     Args:
-        numbers: список целых чисел
+        numbers: Список целых чисел.
 
     Returns:
-        tuple[int, int]:
-        два последних элемента отсортированного по возрастанию списка.
+        Предпоследний и последний элементы списка.
     """
 
     numbers = sorted(numbers)
@@ -67,10 +64,10 @@ def check_hundred(numbers: list[int]) -> str:
     """Функция проверяет список на наличие элементов 100 и -100.
 
     Args:
-        numbers: список целых чисел
+        numbers: Список целых чисел.
 
     Returns:
-        str: YES - если список содержит элементы 100 и -100, NO - иначе.
+        YES - если список содержит элементы 100 и -100, NO - иначе.
     """
 
     return "YES" if -100 in numbers and 100 in numbers else "NO"

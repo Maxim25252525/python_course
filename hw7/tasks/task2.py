@@ -50,3 +50,46 @@ CONTACTS = """Билл Гейтс +79000375594
 Александр Шулико +79023342723
 Билли Айлиш +79027539801
 """
+
+
+def create_dictionary_from_string() -> dict[str, str]:
+    """Функция преобразовывает строку CONTACTS в словарь.
+
+    Returns:
+        Возвращает словарь, где ключи - имена, а значения - номера телефонов.
+    """
+
+    contacts_dict = {}
+    contacts_list = CONTACTS.split('\n')[:-1]
+    for string in contacts_list:
+        items = string.split()
+        contacts_dict[f'{items[0]} {items[1]}'] = items[2]
+
+    return contacts_dict
+
+
+def search_contact(word: str, contacts: dict[str, str]) -> dict[str, str] | str:
+    """Функция находит контакты по введенному слову.
+
+    Args:
+        word: Строка по которой осуществляется поиск.
+        contacts: Словарь, где ключи — имена контактов, а значения - номер телефона.
+
+    Returns:
+        Возвращает словарь с контактами, найденными по заданному слову
+        или строку в зависимости от наличия найденных контактов.
+    """
+
+    new_contacts = dict()
+    for key in contacts.keys():
+        if word.lower() in key.lower():
+            new_contacts[key] = contacts[key]
+
+    if not new_contacts:
+        return "Нет информации"
+    else:
+        return new_contacts
+
+
+if __name__ == '__main__':
+    print(search_contact(input("Введите слово: "), create_dictionary_from_string()))

@@ -150,10 +150,10 @@ def translate_text(text: str) -> str:
 
     russian_text = ""
     for word in text.lower().split():
-        russian_text += DICTIONARY.get(word, "...")
+        russian_text += DICTIONARY.get(word, "...") + " "
 
-    return russian_text.capitalize()
+    return russian_text.capitalize()[:-1]
 
 
 if __name__ == "__main__":
-    print(translate_text(input()))
+    print(translate_text(input("Введите текст: ")))

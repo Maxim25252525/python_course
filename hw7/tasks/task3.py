@@ -42,7 +42,9 @@ Output:
 """
 
 
-def create_weather_report(temperatures: list[float]) -> dict[str: set | float]:
+def create_weather_report(
+    temperatures: list[float],
+) -> dict[str: set | float]:
     """Функция создает отчет о погоде и вычисляет среднюю температуру.
 
     Args:
@@ -55,12 +57,18 @@ def create_weather_report(temperatures: list[float]) -> dict[str: set | float]:
 
     return {
         "unique_degrees": set(temperatures),
-        "average_temperature": sum(temperatures) / len(temperatures)
+        "average_temperature": sum(temperatures) / len(temperatures),
     }
 
 
 if __name__ == "__main__":
-    my_temperatures = list(map(float, input("Введите числа через пробел: ").split()))
+    my_temperatures = list(
+        map(float, input("Введите числа через пробел: ").split())
+    )
     weather_report = create_weather_report(my_temperatures)
-    print(f"Отчет о температуре: {" ".join(map(str, weather_report["unique_degrees"]))}\n"
-          f"Среднее значение температуры: {round(weather_report["average_temperature"], 2)}")
+    unique_temperatures = " ".join(map(str, weather_report["unique_degrees"]))
+    average_temperature = round(weather_report["average_temperature"], 2)
+    print(
+        f"Отчет о температуре: {unique_temperatures}\n"
+        f"Среднее значение температуры: {average_temperature}"
+    )

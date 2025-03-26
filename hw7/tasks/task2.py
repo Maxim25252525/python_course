@@ -60,20 +60,22 @@ def create_dictionary_from_string() -> dict[str, str]:
     """
 
     contacts_dict = {}
-    contacts_list = CONTACTS.split('\n')[:-1]
+    contacts_list = CONTACTS.split("\n")[:-1]
     for string in contacts_list:
         items = string.split()
-        contacts_dict[f'{items[0]} {items[1]}'] = items[2]
+        contacts_dict[f"{items[0]} {items[1]}"] = items[2]
 
     return contacts_dict
 
 
-def search_contact(word: str, contacts: dict[str, str]) -> dict[str, str] | str:
+def search_contact(
+    word: str, contacts: dict[str, str]
+) -> dict[str, str] | str:
     """Функция находит контакты по введенному слову.
 
     Args:
         word: Строка по которой осуществляется поиск.
-        contacts: Словарь, где ключи — имена контактов, а значения - номер телефона.
+        contacts: Словарь, где ключи — имена, а значения - номер телефона.
 
     Returns:
         Возвращает словарь с контактами, найденными по заданному слову
@@ -91,5 +93,9 @@ def search_contact(word: str, contacts: dict[str, str]) -> dict[str, str] | str:
         return new_contacts
 
 
-if __name__ == '__main__':
-    print(search_contact(input("Введите слово: "), create_dictionary_from_string()))
+if __name__ == "__main__":
+    print(
+        search_contact(
+            input("Введите слово: "), create_dictionary_from_string()
+        )
+    )

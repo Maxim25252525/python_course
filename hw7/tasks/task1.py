@@ -136,3 +136,24 @@ DICTIONARY = {
     "attractive": "привлекательный",
     "bed": "кровать",
 }
+
+
+def translate_text(text: str) -> str:
+    """Переводит текст на русский язык.
+
+    Args:
+        text: Текст на английском.
+
+    Returns:
+        Переведенный на русский текст, если все слова найдены в словаре.
+    """
+
+    russian_text = ""
+    for word in text.lower().split():
+        russian_text += DICTIONARY.get(word, "...")
+
+    return russian_text.capitalize()
+
+
+if __name__ == "__main__":
+    print(translate_text(input()))

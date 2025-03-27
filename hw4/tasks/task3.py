@@ -6,3 +6,6 @@
 Данная библиотека есть по умолчанию в Python.
 """
 import antigravity
+
+
+a = antigravity

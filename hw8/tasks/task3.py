@@ -38,3 +38,35 @@ Return:
 {1: 123, 2: 234} - словарь, нельзя преобразовать в число, пропускаем
 'abc 12' - строка, нельзя преобразовать в число, пропускаем
 """
+import re
+
+
+def get_sum(*args: int | str) -> float:
+    """Функция считает сумму чисел.
+
+    Args:
+        *args: Числа или строки, которые можно преобразовать в числа.
+
+    Returns:
+        Возвращает сумму чисел.
+    """
+
+    summary = 0
+    numbers = []
+    pattern = r'^\d+[.,\d]?\d*$'
+    for arg in list(map(str, args)):
+        try:
+            numbers.append(re.match(pattern, arg).group())
+        except AttributeError:
+            pass
+
+    for number in numbers:
+        if ',' in number:
+            number = number.replace(',', '.')
+        summary += float(number)
+
+    return summary
+
+
+if __name__ == '__main__':
+    print(get_sum(1, 2, '3', 2.5, '3,5', '1.5', [1, 2, 3], {1: 123, 2: 234}, 'abc 12'))

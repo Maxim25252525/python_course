@@ -58,3 +58,34 @@ Return:
 {2: [1, 2, 4, 8], 3: [1, 3, 9, 27], 4: [1, 4, 16, 64], 5: [1, 5, 25, 125]}
 ```
 """
+
+
+def get_degrees(start: int, end: int, degree: int = 10) -> dict[int, list]:
+    """Функция создает словарь со степенями чисел
+     от start до end включительно.
+
+    Args:
+        start: Начальное значение диапазона.
+        end: Конечное значение диапазона (включительно).
+        degree: Максимальная степень (включительно), по умолчанию 10.
+
+    Returns:
+        Возвращает словарь, где ключи - числа от start до end,
+        значения - списки, где каждый элемент - это ключ в степени индекса.
+    """
+
+    if not (isinstance(start, int) and isinstance(end, int) and isinstance(degree, int)):
+        raise ValueError('Параметр(ы) не являются натуральными числами')
+    elif start > end:
+        raise ValueError('Первый параметр больше второго')
+
+    result = {}
+    for i in range(start, end + 1):
+        degrees = list(i ** j for j in range(degree + 1))
+        result[i] = degrees
+
+    return result
+
+
+if __name__ == '__main__':
+    print(get_degrees(2, 5, 3))

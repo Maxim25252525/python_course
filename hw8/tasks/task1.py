@@ -29,6 +29,6 @@ def get_length(text: str) -> int:
     return len(text.split())
 
 
-if __name__ == '__main__':
-    my_text = input('Введите текст: ')
+if __name__ == "__main__":
+    my_text = input("Введите текст: ")
     print(get_length(my_text))

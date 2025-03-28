@@ -74,18 +74,22 @@ def get_degrees(start: int, end: int, degree: int = 10) -> dict[int, list]:
         значения - списки, где каждый элемент - это ключ в степени индекса.
     """
 
-    if not (isinstance(start, int) and isinstance(end, int) and isinstance(degree, int)):
-        raise ValueError('Параметр(ы) не являются натуральными числами')
+    if not (
+        isinstance(start, int)
+        and isinstance(end, int)
+        and isinstance(degree, int)
+    ):
+        raise ValueError("Параметр(ы) не являются натуральными числами")
     elif start > end:
-        raise ValueError('Первый параметр больше второго')
+        raise ValueError("Первый параметр больше второго")
 
     result = {}
     for i in range(start, end + 1):
-        degrees = list(i ** j for j in range(degree + 1))
+        degrees = list(i**j for j in range(degree + 1))
         result[i] = degrees
 
     return result
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print(get_degrees(2, 5, 3))

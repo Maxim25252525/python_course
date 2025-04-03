@@ -54,7 +54,22 @@ def test_get_length(words, result):
                 7: [1, 7, 49],
                 8: [1, 8, 64],
                 9: [1, 9, 81],
-            }
+            },
+        ),
+        pytest.param(
+            2, 5, -3, None, marks=pytest.mark.xfail(raises=ValueError)
+        ),
+        pytest.param(
+            -100, -10, 3, None, marks=pytest.mark.xfail(raises=ValueError)
+        ),
+        pytest.param(
+            1, 2, 3.14, None, marks=pytest.mark.xfail(raises=ValueError)
+        ),
+        pytest.param(
+            10, 2, 3, None, marks=pytest.mark.xfail(raises=ValueError)
+        ),
+        pytest.param(
+            -10, -2.5, -3.14, None, marks=pytest.mark.xfail(raises=ValueError)
         ),
     ],
 )

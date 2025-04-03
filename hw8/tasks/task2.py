@@ -78,6 +78,9 @@ def get_degrees(start: int, end: int, degree: int = 10) -> dict[int, list]:
         isinstance(start, int)
         and isinstance(end, int)
         and isinstance(degree, int)
+        and start > 0
+        and end > 0
+        and degree > 0
     ):
         raise ValueError("Параметр(ы) не являются натуральными числами")
     elif start > end:
@@ -92,4 +95,4 @@ def get_degrees(start: int, end: int, degree: int = 10) -> dict[int, list]:
 
 
 if __name__ == "__main__":
-    print(get_degrees(2, 5, 3))
+    print(get_degrees(10, 2, 3))

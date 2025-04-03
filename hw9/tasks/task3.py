@@ -24,3 +24,46 @@
 Добавьте докстринги (описание классов и методов) и аннотации типов (указание
 типов параметров и возвращаемых значений) для каждого метода и класса.
 """
+
+
+class Gun:
+    """Класс, описывающий винтовку."""
+    def __init__(self, shoot_count: int = 0, magazine_capacity: int = 5):
+        self.shoot_count = shoot_count
+        self.magazine_capacity = magazine_capacity
+
+    def reload(self) -> None:
+        """Обнуляет количество произведенных выстрелов."""
+        self.shoot_count = 0
+
+    def shoot(self) -> str:
+        """
+        Возвращает строку 'пиу' или 'пау' или 'чик', в зависимости от количества произведенных выстрелов.
+
+        Returns:
+            'пиу' - если произведено четное количество выстрелов,
+            'пау' - если произведено нечетное количество выстрелов.
+        """
+        if self.shoot_count < self.magazine_capacity:
+            self.shoot_count += 1
+            return 'пау' if self.shoot_count % 2 == 0 else 'пиу'
+        else:
+            self.shoot_count += 1
+            return 'чик'
+
+    def update_magazine_capacity(self, new_capacity: int) -> None:
+        """
+        Устанавливает емкость магазина.
+        Args:
+            new_capacity: Новая емкость магазина.
+        """
+        self.magazine_capacity = new_capacity
+
+
+if __name__ == '__main__':
+    gun = Gun()
+    for i in range(28):
+        print(gun.shoot())
+        if gun.shoot_count == 12:
+            gun.reload()
+            gun.update_magazine_capacity(6)

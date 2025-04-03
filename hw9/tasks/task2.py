@@ -76,3 +76,161 @@ Oris
 Добавьте докстринги (описание классов и методов) и аннотации типов (указание
 типов параметров и возвращаемых значений) для каждого метода и класса.
 """
+
+
+class Mage:
+    """Класс, описывающий мага."""
+    def __init__(self, name: str, life: int = 100, damage: int = 20, energy: int = 100):
+        """
+        Инициализация объекта класса Mage.
+        Args:
+            name: Имя.
+            life: Количество жизни.
+            damage: Количество урона.
+            energy: Количество энергии.
+        """
+        self.name = name
+        self.life = life
+        self.damage = damage
+        self.energy = energy
+
+    def get_name(self) -> str:
+        """
+        Возвращает имя мага как <My name is {имя мага}>.
+
+        Returns:
+            Возвращает строку с именем мага.
+        """
+        return f"My name is {self.name}"
+
+    def get_life(self) -> str:
+        """
+        Возвращает текущий показатель жизни мага как <Life: {текущий показатель жизни}>.
+
+        Returns:
+            Возвращает текущий показатель жизни мага.
+        """
+        return f"Life: {self.life}"
+
+    def get_damage(self) -> str:
+        """
+        Возвращает текущий показатель урона мага как <Damage: {текущий показатель урона}>.
+
+        Returns:
+            Возвращает текущий показатель урона мага.
+        """
+        return f"Damage: {self.damage}"
+
+    def get_energy(self) -> str:
+        """
+        Возвращает текущий показатель энергии мага как <Energy: {текущий показатель энергии}>.
+
+        Returns:
+            Возвращает текущий показатель энергии мага.
+        """
+        return f"Energy: {self.energy}"
+
+    def increase_life(self) -> None:
+        """
+        Увеличивает показатель жизни мага на 20.
+
+        Returns:
+            Ничего не возвращает.
+        """
+        self.life += 20
+
+    def reduce_life(self) -> None:
+        """
+        Уменьшает показатель жизни мага на 20.
+        Если показатель жизни меньше 20, то устанавливает его на 0.
+
+        Returns:
+            Ничего не возвращает.
+        """
+        if 0 < self.life < 20:
+            self.life = 0
+        elif self.life >= 20:
+            self.life -= 20
+        else:
+            raise ValueError('Показатель жизни на нуле')
+
+    def increase_damage(self) -> None:
+        """
+        Увеличивает показатель урона мага на 20.
+
+        Returns:
+            Ничего не возвращает.
+        """
+        self.damage += 20
+
+    def reduce_damage(self) -> None:
+        """
+        Уменьшает показатель урона мага на 20.
+        Если показатель урона меньше 20, то устанавливает его на 0.
+
+        Returns:
+            Ничего не возвращает.
+        """
+        if 0 < self.damage < 20:
+            self.damage = 0
+        elif self.damage >= 20:
+            self.damage -= 20
+        else:
+            raise ValueError('Показатель урона на нуле')
+
+    def increase_energy(self) -> None:
+        """
+        Увеличивает показатель энергии мага на 20.
+
+        Returns:
+            Ничего не возвращает.
+        """
+        self.energy += 20
+
+    def reduce_energy(self) -> None:
+        """
+        Уменьшает показатель энергии мага на 50.
+        Если показатель энергии меньше 50, то устанавливает его на 0.
+
+        Returns:
+            Ничего не возвращает.
+        """
+        if 0 < self.energy < 50:
+            self.energy = 0
+        elif self.energy >= 50:
+            self.energy -= 50
+        else:
+            raise ValueError('Показатель энергии на нуле')
+
+
+class FireMage(Mage):
+    """Класс, описывающий огненного мага."""
+    def apply_ability(self) -> str:
+        """
+        Уменьшает показатель энергии мага на 50.
+        Если энергии меньше 50, то она не уменьшается.
+
+        Returns:
+            'FIRE.....' - если энергии не меньше 50,
+            'Phhh...' - иначе.
+        """
+        if self.energy >= 50:
+            self.energy -= 50
+            return 'FIRE.....'
+        else:
+            return 'Phhh...'
+
+
+if __name__ == '__main__':
+    common_mage = Mage('Johan')
+    fire_mage = FireMage('Rudolf')
+    print(common_mage.get_name())
+    print(fire_mage.get_name())
+    print(common_mage.get_energy())
+    fire_mage.reduce_energy()
+    print(fire_mage.get_energy())
+    fire_mage.increase_energy()
+    print(fire_mage.get_energy())
+    print(fire_mage.apply_ability())
+    print(fire_mage.get_energy())
+    print(fire_mage.apply_ability())

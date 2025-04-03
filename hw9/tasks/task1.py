@@ -46,7 +46,7 @@ class Human:
     def __init__(self, name: str, surname: str, patronymic: str, gender: str, age: int = 0, weight: float = 3.3,
                  height: float = 50):
         """
-        Инициализация объекта класса.
+        Инициализация объекта класса Human.
 
         Args:
             name: Имя.

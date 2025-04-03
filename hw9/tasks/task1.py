@@ -38,3 +38,48 @@
 Добавьте докстринги (описание классов и методов) и аннотации типов (указание
 типов параметров и возвращаемых значений) для каждого метода и класса.
 """
+
+
+class Human:
+    """Класс, описывающий человека."""
+
+    def __init__(self, name: str, surname: str, patronymic: str, gender: str, age: int = 0, weight: float = 3.3,
+                 height: float = 50):
+        """
+        Инициализация объекта класса.
+
+        Args:
+            name: Имя.
+            surname: Фамилия.
+            patronymic: Отчество.
+            gender: Пол('м' или 'ж').
+            age: Возраст(по умолчанию 0).
+            weight: Вес(по умолчанию 3.3 кг).
+        """
+        self.name: str = name
+        self.surname: str = surname
+        self.patronymic: str = patronymic
+        self.gender: str = gender
+        self.age: int = age
+        self.weight: float = weight
+        self.height: float = height
+
+    def get_info(self) -> str:
+        """
+        Выводит информацию о человеке.
+
+        Returns:
+            Ничего не возвращает.
+        """
+        return (f"Фамилия: {self.surname}\n"
+                f"Имя: {self.name}\n"
+                f"Отчество: {self.patronymic}\n"
+                f"Возраст: {self.age}\n"
+                f"Пол: {self.gender}\n"
+                f"Вес: {self.weight} кг\n"
+                f"Рост: {self.height} см")
+
+
+if __name__ == '__main__':
+    maxim = Human("Максим", "Романчук", "Павлович", "м", 15, 61.7, 183)
+    print(maxim.get_info())

@@ -141,7 +141,7 @@ class TestHw9Task3:
     def test_gun(self):
         gun = task3.Gun()
         assert gun.shoot_count == 0
-        assert gun.max_shoot_number == 5
+        assert gun.magazine_capacity == 5
 
     def test_shoot(self):
         gun = task3.Gun()
@@ -165,7 +165,7 @@ class TestHw9Task3:
         gun = task3.Gun()
         gun.update_magazine_capacity(10)
         result = [gun.shoot() for _ in range(11)]
-        assert gun.max_shoot_number == 10
+        assert gun.magazine_capacity == 10
         assert result == [
             "пиу",
             "пау",

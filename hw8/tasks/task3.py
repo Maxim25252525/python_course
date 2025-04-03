@@ -42,7 +42,7 @@ Return:
 import re
 
 
-def get_sum(*args: int | str) -> float:
+def get_sum(*args) -> float:
     """Функция считает сумму чисел.
 
     Args:

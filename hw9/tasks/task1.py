@@ -43,8 +43,16 @@
 class Human:
     """Класс, описывающий человека."""
 
-    def __init__(self, name: str, surname: str, patronymic: str, gender: str, age: int = 0, weight: float = 3.3,
-                 height: float = 50):
+    def __init__(
+        self,
+        name: str,
+        surname: str,
+        patronymic: str,
+        gender: str,
+        age: int = 0,
+        weight: float = 3.3,
+        height: float = 50,
+    ):
         """
         Инициализация объекта класса Human.
 
@@ -71,15 +79,17 @@ class Human:
         Returns:
             Ничего не возвращает.
         """
-        return (f"Фамилия: {self.surname}\n"
-                f"Имя: {self.name}\n"
-                f"Отчество: {self.patronymic}\n"
-                f"Возраст: {self.age}\n"
-                f"Пол: {self.gender}\n"
-                f"Вес: {self.weight} кг\n"
-                f"Рост: {self.height} см")
+        return (
+            f"Фамилия: {self.surname}\n"
+            f"Имя: {self.name}\n"
+            f"Отчество: {self.patronymic}\n"
+            f"Возраст: {self.age}\n"
+            f"Пол: {self.gender}\n"
+            f"Вес: {self.weight} кг\n"
+            f"Рост: {self.height} см"
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     maxim = Human("Максим", "Романчук", "Павлович", "м", 15, 61.7, 183)
     print(maxim.get_info())

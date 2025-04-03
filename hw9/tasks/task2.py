@@ -80,7 +80,10 @@ Oris
 
 class Mage:
     """Класс, описывающий мага."""
-    def __init__(self, name: str, life: int = 100, damage: int = 20, energy: int = 100):
+
+    def __init__(
+        self, name: str, life: int = 100, damage: int = 20, energy: int = 100
+    ):
         """
         Инициализация объекта класса Mage.
         Args:
@@ -105,7 +108,8 @@ class Mage:
 
     def get_life(self) -> str:
         """
-        Возвращает текущий показатель жизни мага как <Life: {текущий показатель жизни}>.
+        Возвращает текущий показатель жизни мага как
+        <Life: {текущий показатель жизни}>.
 
         Returns:
             Возвращает текущий показатель жизни мага.
@@ -114,7 +118,8 @@ class Mage:
 
     def get_damage(self) -> str:
         """
-        Возвращает текущий показатель урона мага как <Damage: {текущий показатель урона}>.
+        Возвращает текущий показатель урона мага как
+        <Damage: {текущий показатель урона}>.
 
         Returns:
             Возвращает текущий показатель урона мага.
@@ -123,7 +128,8 @@ class Mage:
 
     def get_energy(self) -> str:
         """
-        Возвращает текущий показатель энергии мага как <Energy: {текущий показатель энергии}>.
+        Возвращает текущий показатель энергии мага
+        как <Energy: {текущий показатель энергии}>.
 
         Returns:
             Возвращает текущий показатель энергии мага.
@@ -144,7 +150,7 @@ class Mage:
         elif self.life >= 20:
             self.life -= 20
         else:
-            raise ValueError('Показатель жизни на нуле')
+            raise ValueError("Показатель жизни на нуле")
 
     def increase_damage(self) -> None:
         """Увеличивает показатель урона мага на 20."""
@@ -160,7 +166,7 @@ class Mage:
         elif self.damage >= 20:
             self.damage -= 20
         else:
-            raise ValueError('Показатель урона на нуле')
+            raise ValueError("Показатель урона на нуле")
 
     def increase_energy(self) -> None:
         """Увеличивает показатель энергии мага на 20."""
@@ -176,11 +182,12 @@ class Mage:
         elif self.energy >= 50:
             self.energy -= 50
         else:
-            raise ValueError('Показатель энергии на нуле')
+            raise ValueError("Показатель энергии на нуле")
 
 
 class FireMage(Mage):
     """Класс, описывающий огненного мага."""
+
     def apply_ability(self) -> str:
         """
         Уменьшает показатель энергии мага на 50.
@@ -192,14 +199,14 @@ class FireMage(Mage):
         """
         if self.energy >= 50:
             self.energy -= 50
-            return 'FIRE.....'
+            return "FIRE....."
         else:
-            return 'Phhh...'
+            return "Phhh..."
 
 
-if __name__ == '__main__':
-    common_mage = Mage('Johan')
-    fire_mage = FireMage('Rudolf')
+if __name__ == "__main__":
+    common_mage = Mage("Johan")
+    fire_mage = FireMage("Rudolf")
     print(common_mage.get_name())
     print(fire_mage.get_name())
     print(common_mage.get_energy())

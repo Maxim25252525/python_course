@@ -28,6 +28,7 @@
 
 class Gun:
     """Класс, описывающий винтовку."""
+
     def __init__(self, shoot_count: int = 0, magazine_capacity: int = 5):
         self.shoot_count = shoot_count
         self.magazine_capacity = magazine_capacity
@@ -38,7 +39,8 @@ class Gun:
 
     def shoot(self) -> str:
         """
-        Возвращает строку 'пиу' или 'пау' или 'чик', в зависимости от количества произведенных выстрелов.
+        Возвращает строку 'пиу' или 'пау' или 'чик',
+        в зависимости от количества произведенных выстрелов.
 
         Returns:
             'пиу' - если произведено четное количество выстрелов,
@@ -46,10 +48,10 @@ class Gun:
         """
         if self.shoot_count < self.magazine_capacity:
             self.shoot_count += 1
-            return 'пау' if self.shoot_count % 2 == 0 else 'пиу'
+            return "пау" if self.shoot_count % 2 == 0 else "пиу"
         else:
             self.shoot_count += 1
-            return 'чик'
+            return "чик"
 
     def update_magazine_capacity(self, new_capacity: int) -> None:
         """
@@ -60,7 +62,7 @@ class Gun:
         self.magazine_capacity = new_capacity
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     gun = Gun()
     for i in range(28):
         print(gun.shoot())

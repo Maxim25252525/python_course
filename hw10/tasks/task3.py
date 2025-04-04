@@ -60,3 +60,65 @@
 Добавьте докстринги (описание классов и методов) и аннотации типов (указание
 типов параметров и возвращаемых значений) для каждого метода и класса.
 """
+from copy import deepcopy as dp
+
+
+class ClassJournal:
+    """Класс, описывающий журнал класса."""
+    def __init__(self, subjects: list[str], students: list[str]):
+        """
+        Инициализация объекта класса ClassJournal.
+
+        Args:
+            subjects: Список предметов.
+            students: Список учеников.
+        """
+        self.class_journal = {name: {subject: [] for subject in subjects} for name in students}
+
+    def set_mark(self, student: str, subject: str, mark: int):
+        """
+        Добавляет оценку по предмету ученику.
+
+        Args:
+            student: ФИО ученика.
+            subject: Название предмета.
+            mark: Оценка(целочисленное значение от 2 до 5).
+        """
+        try:
+            if not (2 <= mark <= 5):
+                raise ValueError('Оценка должна принадлежать диапазону от 2 до 5 включительно')
+            self.class_journal[student][subject].append(mark)
+        except KeyError:
+            raise KeyError('Данного ученика или предмета нет в журнале')
+
+    def get_student_info(self, student: str) -> dict[str, list[int]]:
+        """
+        Создает полную копию словаря с предметами и оценками для указанного ученика.
+
+        Args:
+            student: Ученик.
+
+        Returns:
+            Возвращает полную копию словаря с предметами и оценками для указанного ученика.
+        """
+        try:
+            return dp(self.class_journal[student])
+        except KeyError:
+            raise KeyError("Данного ученика нет в журнале")
+
+    def get_all_info(self) -> dict[str, dict[str, list[int]]]:
+        """
+        Возвращает весь журнал класса.
+
+        Returns:
+            Возвращает полную копию атрибута 'class_journal'.
+        """
+        return dp(self.class_journal)
+
+
+if __name__ == '__main__':
+    my_class = ClassJournal(['Математика', 'Физкультура'], ['Даша', 'Коля'])
+    print(my_class.get_all_info())
+    my_class.set_mark('Даша', 'Математика', 5)
+    print(my_class.get_student_info('Даша'))
+    print(my_class.get_student_info('Коля'))

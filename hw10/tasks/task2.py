@@ -39,6 +39,7 @@
 
 class Degree:
     """Класс, описывающий степень числа."""
+
     def __init__(self, start: int, end: int, degree: int = 10):
         """
         Инициализация объекта класса Degree.
@@ -62,11 +63,13 @@ class Degree:
             Возвращает словарь, где ключи - числа от start до end,
             значения - списки, где каждый элемент - это ключ в степени индекса.
         """
-        return {num: [num ** index for index in range(self.degree + 1)]
-                for num in range(self.start, self.end + 1)}
+        return {
+            num: [num**index for index in range(self.degree + 1)]
+            for num in range(self.start, self.end + 1)
+        }
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     degrees10 = Degree(1, 3)
     degrees2 = Degree(1, 3, 2)
     print(degrees10.get_degrees())

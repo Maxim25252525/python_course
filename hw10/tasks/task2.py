@@ -35,3 +35,39 @@
 
 Напишите тесты для класса, используя параметризацию.
 """
+
+
+class Degree:
+    """Класс, описывающий степень числа."""
+    def __init__(self, start: int, end: int, degree: int = 10):
+        """
+        Инициализация объекта класса Degree.
+
+        Args:
+            Все аргументы являются натуральными числами.
+            start: Начало диапазона.
+            end: Конец диапазона(включительно).
+            degree: Максимальная степень(по умолчанию 10).
+        """
+        self.start = start
+        self.end = end
+        self.degree = degree
+
+    def get_degrees(self) -> dict:
+        """
+        Функция создает словарь со степенями чисел
+        от start до end включительно.
+
+        Returns:
+            Возвращает словарь, где ключи - числа от start до end,
+            значения - списки, где каждый элемент - это ключ в степени индекса.
+        """
+        return {num: [num ** index for index in range(self.degree + 1)]
+                for num in range(self.start, self.end + 1)}
+
+
+if __name__ == '__main__':
+    degrees10 = Degree(1, 3)
+    degrees2 = Degree(1, 3, 2)
+    print(degrees10.get_degrees())
+    print(degrees2.get_degrees())

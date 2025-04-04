@@ -40,6 +40,7 @@ class Filter:
     def __init__(self, data: list):
         """
         Инициализация объекта класса Filter.
+
         Args:
             data: Список для фильтрации.
         """
@@ -76,14 +77,12 @@ class Filter:
             Возвращает новый список, состоящий только из чисел выбранного диапазона
             и списка data.
         """
-        return [num for num in range(start, end + 1) if num in self.data]
+        return [num for num in Filter(self.data).filter_by_numbers() if start <= num <= end]
 
 
 if __name__ == '__main__':
-    data = [1, 3, 5, 0.2, 'fkr', 'sdf', 0.123, 123]
-    new_data = Filter(data)
+    new_data = Filter([1.2, "1.2", 1, [1.2], {1.2: 1.2}, (1.2, 1.3)])
     print(new_data.data)
     print(new_data.filter_by_numbers())
     print(new_data.filter_by_string())
-    print(new_data.filter_by_slice_numbers())
-    print(new_data.filter_by_slice_numbers(5, 89))
+    print(new_data.filter_by_slice_numbers(1, 2))

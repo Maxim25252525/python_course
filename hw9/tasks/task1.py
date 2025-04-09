@@ -41,17 +41,32 @@
 
 
 class Human:
-    """Класс, описывающий человека."""
+
+    """Класс, описывающий человека.
+
+    Args:
+        name: Имя.
+        surname: Фамилия.
+        patronymic: Отчество.
+        gender: Пол.
+
+    Attributes:
+        name: Имя.
+        surname: Фамилия.
+        patronymic: Отчество.
+        gender: Пол.
+        age: Возраст.
+        weight: Вес.
+        height: Рост.
+
+    """
 
     def __init__(
         self,
         name: str,
         surname: str,
         patronymic: str,
-        gender: str,
-        age: int = 0,
-        weight: float = 3.3,
-        height: float = 50,
+        gender: str
     ):
         """
         Инициализация объекта класса Human.
@@ -61,16 +76,14 @@ class Human:
             surname: Фамилия.
             patronymic: Отчество.
             gender: Пол('м' или 'ж').
-            age: Возраст(по умолчанию 0).
-            weight: Вес(по умолчанию 3.3 кг).
         """
         self.name: str = name
         self.surname: str = surname
         self.patronymic: str = patronymic
         self.gender: str = gender
-        self.age: int = age
-        self.weight: float = weight
-        self.height: float = height
+        self.age: int = 0
+        self.weight: float = 3.3
+        self.height: float = 50
 
     def get_info(self) -> str:
         """
@@ -91,5 +104,6 @@ class Human:
 
 
 if __name__ == "__main__":
-    maxim = Human("Максим", "Романчук", "Павлович", "м", 15, 61.7, 183)
+    maxim = Human("Максим", "Романчук", "Павлович", "м")
+    maxim.age = 15
     print(maxim.get_info())

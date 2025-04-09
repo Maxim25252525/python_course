@@ -27,11 +27,16 @@
 
 
 class Gun:
-    """Класс, описывающий винтовку."""
+    """Класс, описывающий винтовку.
 
-    def __init__(self, shoot_count: int = 0, magazine_capacity: int = 5):
-        self.shoot_count = shoot_count
-        self.magazine_capacity = magazine_capacity
+    Attributes:
+        shoot_count: Количество произведённых выстрелов (по умол. 0).
+        magazine_capacity: Емкость магазина (по умол. 5).
+    """
+
+    def __init__(self):
+        self.shoot_count = 0
+        self.magazine_capacity = 5
 
     def reload(self) -> None:
         """Обнуляет количество произведенных выстрелов."""

@@ -79,23 +79,32 @@ Oris
 
 
 class Mage:
-    """Класс, описывающий мага."""
+    """Класс, описывающий мага.
+
+    Args:
+        name: Имя мага.
+
+    Attributes:
+        name: Имя мага.
+        life: Количество жизни (по умол. 100).
+        damage: Количество урона (по умол. 20).
+        energy: Количество энергии (по умол. 100).
+
+    """
 
     def __init__(
-        self, name: str, life: int = 100, damage: int = 20, energy: int = 100
+        self, name: str
     ):
         """
         Инициализация объекта класса Mage.
+
         Args:
             name: Имя.
-            life: Количество жизни.
-            damage: Количество урона.
-            energy: Количество энергии.
         """
         self.name = name
-        self.life = life
-        self.damage = damage
-        self.energy = energy
+        self.life = 100
+        self.damage = 20
+        self.energy = 100
 
     def get_name(self) -> str:
         """

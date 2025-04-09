@@ -36,7 +36,15 @@ isinstance. Например, isinstance(elem, str) - принадлежит л�
 
 
 class Filter:
-    """Класс, описывающий фильтрацию списка."""
+    """Класс, описывающий фильтрацию списка.
+
+    Args:
+        data: Список для фильтрации.
+
+    Attributes:
+        data: Данные для фильтрации.
+
+    """
 
     def __init__(self, data: list):
         """
@@ -80,7 +88,7 @@ class Filter:
         """
         return [
             num
-            for num in Filter(self.data).filter_by_numbers()
+            for num in self.filter_by_numbers()
             if start <= num <= end
         ]
 

@@ -65,7 +65,17 @@ from copy import deepcopy as dp
 
 
 class ClassJournal:
-    """Класс, описывающий журнал класса."""
+    """Класс, описывающий журнал класса.
+
+    Args:
+        subjects: Список предметов.
+        students: Список учеников.
+
+    Attributes:
+        class_journal: Словарь в формате:
+        {ученик: {предмет: список оценок, ...}, ...}
+
+    """
 
     def __init__(self, subjects: list[str], students: list[str]):
         """

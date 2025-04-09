@@ -38,9 +38,20 @@
 
 
 class Degree:
-    """Класс, описывающий степень числа."""
+    """Класс, описывающий степень числа.
 
-    def __init__(self, start: int, end: int, degree: int = 10):
+    Args:
+        start: начальное значение диапазона (натуральное число).
+        end: Конечное значение диапазона (натуральное число).
+
+    Attributes:
+        start: начальное значение диапазона (натуральное число).
+        end: Конечное значение диапазона (натуральное число).
+        degree: Максимальная степень (натуральное число, по умолчанию 11).
+
+    """
+
+    def __init__(self, start: int, end: int):
         """
         Инициализация объекта класса Degree.
 
@@ -48,11 +59,10 @@ class Degree:
             Все аргументы являются натуральными числами.
             start: Начало диапазона.
             end: Конец диапазона(включительно).
-            degree: Максимальная степень(по умолчанию 10).
         """
         self.start = start
         self.end = end
-        self.degree = degree
+        self.degree = 10
 
     def get_degrees(self) -> dict:
         """
@@ -71,6 +81,7 @@ class Degree:
 
 if __name__ == "__main__":
     degrees10 = Degree(1, 3)
-    degrees2 = Degree(1, 3, 2)
+    degrees2 = Degree(1, 3)
+    degrees2.degree = 2
     print(degrees10.get_degrees())
     print(degrees2.get_degrees())

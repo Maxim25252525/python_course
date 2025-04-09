@@ -1,5 +1,5 @@
 import pytest
-from hw10.tasks import task2
+from hw10.tasks import task2 # noqa
 
 
 @pytest.mark.parametrize(

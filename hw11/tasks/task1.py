@@ -65,6 +65,7 @@ class Gemstone:
         carat: Вес камня в каратах(вещественное число).
 
     """
+
     def __init__(self, name: str, carat: float):
         """
         Инициализация объекта класса Gemstone.
@@ -83,7 +84,7 @@ class Gemstone:
         Returns:
             Название камня.
         """
-        return f'Название: {self.name}'
+        return f"Название: {self.name}"
 
     def get_carat(self) -> str:
         """
@@ -92,7 +93,7 @@ class Gemstone:
         Returns:
             Вес камня в каратах.
         """
-        return f'Карат: {self.carat}'
+        return f"Карат: {self.carat}"
 
 
 class Diamond(Gemstone):
@@ -109,6 +110,7 @@ class Diamond(Gemstone):
         diameter: Максимальный диаметр камня в миллиметрах (вещественное число).
 
     """
+
     def __init__(self, name: str, carat: float, diameter: float):
         """
         Инициализация объекта класса Diamond.
@@ -129,7 +131,7 @@ class Diamond(Gemstone):
         Returns:
             Диаметр камня в миллиметрах.
         """
-        return f'Диаметр: {self.diameter} мм'
+        return f"Диаметр: {self.diameter} мм"
 
 
 class Brilliant(Diamond):
@@ -148,6 +150,7 @@ class Brilliant(Diamond):
         cost: Стоимость камня(вещественное число).
 
     """
+
     def __init__(self, name: str, carat: float, diameter: float, cost: float):
         """
         Инициализация объекта класса Brilliant.
@@ -166,11 +169,11 @@ class Brilliant(Diamond):
         Returns:
             Стоимость камня (в рублях).
         """
-        return f'Стоимость: {self.cost} руб.'
+        return f"Стоимость: {self.cost} руб."
 
 
-if __name__ == '__main__':
-    diamond = Brilliant('Сапфир', 2.5, 3.1, 12547839)
+if __name__ == "__main__":
+    diamond = Brilliant("Сапфир", 2.5, 3.1, 12547839)
     print(diamond.get_name())
     print(diamond.get_carat())
     print(diamond.get_diameter())

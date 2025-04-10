@@ -89,3 +89,91 @@
 Добавьте докстринги (описание классов и методов) и аннотации типов (указание
 типов параметров и возвращаемых значений) для каждого метода и класса.
 """
+
+
+class Flat:
+    """
+    Класс, описывающий квартиру.
+
+    Args:
+        rooms: Количество комнат.
+        windows: Количество окон.
+        bathrooms: Количество санузлов.
+
+    Attributes:
+        rooms: Количество комнат.
+        windows: Количество окон.
+        bathrooms: Количество санузлов.
+        laundry: Есть прачечная или нет. По умолчанию False.
+    """
+    def __init__(self, rooms: int, windows: int, bathrooms: int):
+        """
+        Инициализация объекта класса Flat.
+
+        Args:
+            rooms: Количество комнат.
+            windows: Количество окон.
+            bathrooms: Количество санузлов.
+        """
+
+        if rooms < 1:
+            raise ValueError('Количество комнат должно быть больше 0')
+        elif windows < 1:
+            raise ValueError('Количество окон должно быть больше 0')
+        elif bathrooms < 0:
+            raise ValueError('Количество санузлов должно быть больше или равно 0')
+
+        self.rooms = rooms
+        self.windows = windows
+        self.bathrooms = bathrooms
+        self.laundry = False
+
+    def get_info(self) -> str:
+        """
+        Возвращает информацию о квартире.
+
+        Returns:
+            Возвращает количество комнат, количество окон, количество санузлов
+            и наличие прачечной в квартире.
+        """
+        return (f'Квартира состоит из {self.rooms} комнат(ы). Количество окон в квартире - {self.windows}. '
+                f'Санузлов - {self.bathrooms}. В квартире {'есть' if self.laundry else 'нет'} прачечная.')
+
+
+class Garage:
+    """Класс, описывающий гараж.
+
+    Args:
+        square: Площадь гаража.
+
+    Attributes:
+        square: Площадь гаража.
+        warm: Отапливаемый или нет. По умолчанию False.
+
+    """
+    def __init__(self, square: float):
+        """
+        Инициализация объекта класса Garage.
+
+        Args:
+            square: Площадь гаража.
+        """
+        if square < 0:
+            raise ValueError('Площадь гаража должна быть больше 0')
+
+        self.square = square
+        self.warm = False
+
+    def get_info(self) -> str:
+        """
+        Возвращает информацию о гараже.
+
+        Returns:
+            Возвращает площадь гаража и наличие отопления в гараже.
+        """
+        return (f'Гараж площадью {self.square} м^2. '
+                f'{'Отапливаемый' if self.warm else 'Не отапливаемый'}.')
+
+
+class Home:
+    pass

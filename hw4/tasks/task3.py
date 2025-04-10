@@ -5,4 +5,5 @@
 
 Данная библиотека есть по умолчанию в Python.
 """
+
 import antigravity # noqa

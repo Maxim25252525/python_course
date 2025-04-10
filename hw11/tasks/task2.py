@@ -137,7 +137,8 @@ class Flat:
             и наличие прачечной в квартире.
         """
         return (f'Квартира состоит из {self.rooms} комнат(ы). Количество окон в квартире - {self.windows}. '
-                f'Санузлов - {self.bathrooms}. В квартире {'есть' if self.laundry else 'нет'} прачечная.')
+                f'Санузлов - {self.bathrooms}. '
+                f'В квартире {'есть прачечная' if self.laundry else 'нет прачечной'}.')
 
 
 class Garage:
@@ -158,7 +159,7 @@ class Garage:
         Args:
             square: Площадь гаража.
         """
-        if square < 0:
+        if square <= 0:
             raise ValueError('Площадь гаража должна быть больше 0')
 
         self.square = square
@@ -171,9 +172,72 @@ class Garage:
         Returns:
             Возвращает площадь гаража и наличие отопления в гараже.
         """
-        return (f'Гараж площадью {self.square} м^2. '
-                f'{'Отапливаемый' if self.warm else 'Не отапливаемый'}.')
+        return (f'Гараж {'отапливаемый' if self.warm else 'неотапливаемый'} '
+                f'площадью {self.square} м^2.')
 
 
-class Home:
-    pass
+class Home(Flat, Garage):
+    """Класс, описывающий дом.
+
+        Args:
+            rooms: Количество комнат.
+            windows: Количество окон.
+            bathrooms: Количество санузлов.
+            square: Площадь гаража.
+            floors: Количество этажей.
+
+        Attributes:
+            rooms: Количество комнат.
+            windows: Количество окон.
+            bathrooms: Количество санузлов.
+            garage_square: Площадь гаража.
+            floors: Количество этажей.
+            loft: Есть чердак или нет. По умолчанию False.
+
+    """
+    def __init__(self, rooms: int, windows: int, bathrooms: int,
+                 square: float, floors: int):
+        """
+        Инициализация объекта класса Home.
+
+        Args:
+            rooms: Количество комнат.
+            windows: Количество окон.
+            bathrooms: Количество санузлов.
+            square: Площадь гаража.
+            floors: Количество этажей.
+        """
+        if floors < 1:
+            raise ValueError('Количество этажей должно быть больше 0')
+
+        Garage.__init__(self, square)
+        Flat.__init__(self, rooms, windows, bathrooms)
+        self.rooms = rooms
+        self.windows = windows
+        self.bathrooms = bathrooms
+        self.garage_square = square
+        self.floors = floors
+        self.loft = False
+        self.basement = True
+
+    def get_info(self) -> str:
+        """
+        Возвращает информацию о доме.
+
+        Returns:
+            Возвращает информацию о доме, включая количество этажей, количество комнат,
+            количество окон, количество санузлов, наличие прачечной, площадь гаража,
+            наличие отопления в гараже, наличие чердака и наличие подвала.
+        """
+        return (f'Дом имеет {self.floors} этажа/этажей. Состоит из {self.rooms} комнат(ы). '
+                f'Количество окон в доме - {self.windows}. Санузлов - {self.bathrooms}. '
+                f'В доме {'есть прачечная' if self.laundry else 'нет прачечной'}. '
+                f'Также в доме есть {'отапливаемый' if self.warm else 'не отапливаемый'} гараж '
+                f'площадью {self.garage_square} м^2. '
+                f'{'Есть чердак' if self.loft else 'Нет чердака'}. '
+                f'{'Есть подвал' if self.basement else 'Нет подвала'}.')
+
+
+if __name__ == '__main__':
+    my_home = Home(rooms=5, windows=8, bathrooms=3, square=100, floors=2)
+    print(my_home.get_info())

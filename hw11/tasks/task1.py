@@ -51,3 +51,127 @@
 Добавьте докстринги (описание классов и методов) и аннотации типов (указание
 типов параметров и возвращаемых значений) для каждого метода и класса.
 """
+
+
+class Gemstone:
+    """Класс, описывающий драгоценный камень.
+
+    Args:
+        name: Название камня.
+        carat: Вес камня в каратах(вещественное число).
+
+    Attributes:
+        name: Название камня.
+        carat: Вес камня в каратах(вещественное число).
+
+    """
+    def __init__(self, name: str, carat: float):
+        """
+        Инициализация объекта класса Gemstone.
+
+        Args:
+            name: Название камня.
+            carat: Вес камня в каратах(вещественное число).
+        """
+        self.name = name
+        self.carat = carat
+
+    def get_name(self) -> str:
+        """
+        Возвращает название камня.
+
+        Returns:
+            Название камня.
+        """
+        return f'Название: {self.name}'
+
+    def get_carat(self) -> str:
+        """
+        Возвращает вес камня в каратах.
+
+        Returns:
+            Вес камня в каратах.
+        """
+        return f'Карат: {self.carat}'
+
+
+class Diamond(Gemstone):
+    """Класс, описывающий алмаз.
+
+    Args:
+        name: Название камня.
+        carat: Вес в каратах(вещественное число).
+        diameter: Диаметр(вещественное число).
+
+    Attributes:
+        name: Название камня.
+        carat: Вес камня в каратах(вещественное число).
+        diameter: Максимальный диаметр камня в миллиметрах (вещественное число).
+
+    """
+    def __init__(self, name: str, carat: float, diameter: float):
+        """
+        Инициализация объекта класса Diamond.
+
+        Args:
+            name: Название камня.
+            carat: Вес (вещественное число).
+            diameter: Диаметр(вещественное число).
+
+        """
+        super().__init__(name, carat)
+        self.diameter = diameter
+
+    def get_diameter(self) -> str:
+        """
+        Возвращает максимальный диаметр камня в миллиметрах.
+
+        Returns:
+            Диаметр камня в миллиметрах.
+        """
+        return f'Диаметр: {self.diameter} мм'
+
+
+class Brilliant(Diamond):
+    """Класс, описывающий бриллиант.
+
+    Args:
+        name: Название камня.
+        carat: Вес в каратах(вещественное число).
+        diameter: Диаметр(вещественное число).
+        cost: Стоимость камня(вещественное число).
+
+    Attributes:
+        name: Название камня.
+        carat: Вес камня в каратах(вещественное число).
+        diameter: Максимальный диаметр камня в миллиметрах (вещественное число).
+        cost: Стоимость камня(вещественное число).
+
+    """
+    def __init__(self, name: str, carat: float, diameter: float, cost: float):
+        """
+        Инициализация объекта класса Brilliant.
+
+        Args:
+            name: Название камня.
+            carat: Вес (вещественное число).
+        """
+        super().__init__(name, carat, diameter)
+        self.cost = cost
+
+    def get_cost(self) -> str:
+        """
+        Возвращает стоимость камня (в рублях).
+
+        Returns:
+            Стоимость камня (в рублях).
+        """
+        return f'Стоимость: {self.cost} руб.'
+
+
+if __name__ == '__main__':
+    diamond = Brilliant('Сапфир', 2.5, 3.1, 12547839)
+    print(diamond.get_name())
+    print(diamond.get_carat())
+    print(diamond.get_diameter())
+    print(diamond.get_cost())

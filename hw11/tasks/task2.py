@@ -229,10 +229,6 @@ class Home(Flat, Garage):
 
         Garage.__init__(self, square)
         Flat.__init__(self, rooms, windows, bathrooms)
-        self.rooms = rooms
-        self.windows = windows
-        self.bathrooms = bathrooms
-        self.garage_square = square
         self.floors = floors
         self.loft = False
         self.basement = True
@@ -255,7 +251,7 @@ class Home(Flat, Garage):
             f"В доме {'есть прачечная' if self.laundry else 'нет прачечной'}. "
             f"Также в доме есть "
             f"{'отапливаемый' if self.warm else 'не отапливаемый'} гараж "
-            f"площадью {self.garage_square} м^2. "
+            f"площадью {self.square} м^2. "
             f"{'Есть чердак' if self.loft else 'Нет чердака'}. "
             f"{'Есть подвал' if self.basement else 'Нет подвала'}."
         )

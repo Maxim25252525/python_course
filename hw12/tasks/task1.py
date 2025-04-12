@@ -164,6 +164,24 @@ class Task:
                 f'--------------------')
 
 
+output_number = 1
+
+
+def print_info(func):
+    """Функция-декоратор."""
+
+    def wrapper(*args, **kwargs):
+        global output_number
+        print(str(output_number) + '-ый вывод:')
+        for number, task in enumerate(func(*args, **kwargs)):
+            print(f'\t {number + 1}-ая задача:')
+            print(*map(lambda x: '\t' + x + '\n', task.get_info().split('\n')))
+        print()
+        output_number += 1
+
+    return wrapper
+
+
 class TodoList:
     """Класс, описывающий список дел.
 
@@ -215,6 +233,7 @@ class TodoList:
         """
         return self.search_task(task_id)
 
+    @print_info
     def get_all_tasks(self) -> list:
         """
         Возвращает все задачи из списка дел.
@@ -224,6 +243,7 @@ class TodoList:
         """
         return self.tasks
 
+    @print_info
     def sorted_tasks(self, key: str = 'deadline', reverse: bool = False) -> list:
         """
         Сортирует задачи из списка дел.
@@ -247,9 +267,7 @@ if __name__ == '__main__':
     todolist.add_task(task1)
     todolist.add_task(task2)
     todolist.add_task(task3)
-    print('Первый вывод:')
-    print(*[x.get_info() for x in todolist.sorted_tasks('priority', True)], sep='\n\n')
+    todolist.sorted_tasks('priority', True)
     todolist.set_completed(task2.id)
-    print('\nВторой вывод:')
-    print(*[x.get_info() for x in todolist.get_all_tasks()], sep='\n\n')
+    todolist.get_all_tasks()
 

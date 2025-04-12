@@ -106,7 +106,6 @@ set_completed и get_task.
 типов параметров и возвращаемых значений) для каждого метода и класса.
 """
 
-
 from uuid import uuid4
 from datetime import date
 
@@ -128,7 +127,10 @@ class Task:
         priority: Приоритет задачи(по умолчанию 1).
 
     """
-    def __init__(self, name: str, description: str, deadline: date, priority: int = 1):
+
+    def __init__(
+        self, name: str, description: str, deadline: date, priority: int = 1
+    ):
         """
         Инициализация объекта класса Task.
 
@@ -158,11 +160,14 @@ class Task:
             <дедлайн>
             --------------------
         """
-        return (f'--------------------\n'
-                f'{self.name.capitalize()} - {self.priority}\n\n'
-                f'{'> ' + self.description + '\n\n' if self.description.strip() else ""}'
-                f'{self.deadline.strftime("%d.%m.%Y")}\n'
-                f'--------------------')
+        description = '> ' + self.description + '\n\n'
+        return (
+            f"--------------------\n"
+            f"{self.name.capitalize()} - {self.priority}\n\n"
+            f'{description if self.description.strip() else ""}'
+            f'{self.deadline.strftime("%d.%m.%Y")}\n'
+            f"--------------------"
+        )
 
 
 output_number = 1
@@ -173,10 +178,10 @@ def print_info(func):
 
     def wrapper(*args, **kwargs):
         global output_number
-        print(str(output_number) + '-й вывод:')
+        print(str(output_number) + "-й вывод:")
         for number, task in enumerate(func(*args, **kwargs)):
-            print(f'\t {number + 1}-я задача:')
-            print(*map(lambda x: '\t' + x + '\n', task.get_info().split('\n')))
+            print(f"\t {number + 1}-я задача:")
+            print(*map(lambda x: "\t" + x + "\n", task.get_info().split("\n")))
         print()
         output_number += 1
         return func(*args, **kwargs)
@@ -190,6 +195,7 @@ class TodoList:
     Attributes:
         tasks: Список дел.
     """
+
     def __init__(self):
         """Инициализация объекта класса TodoList."""
         self.tasks = []
@@ -208,7 +214,7 @@ class TodoList:
             if search_key == task.id:
                 return task
 
-        raise ValueError(f'Задача {search_key} не найдена')
+        raise ValueError(f"Задача {search_key} не найдена")
 
     def add_task(self, task: Task):
         """Добавляет задачу в список дел."""
@@ -246,7 +252,9 @@ class TodoList:
         return self.tasks
 
     @print_info
-    def get_sorted_tasks(self, key: str = 'deadline', reverse: bool = False) -> list:
+    def get_sorted_tasks(
+        self, key: str = "deadline", reverse: bool = False
+    ) -> list:
         """
         Сортирует задачи из списка дел.
 
@@ -257,19 +265,23 @@ class TodoList:
         Returns:
             Список отсортированных задач из списка дел.
         """
-        return sorted(self.tasks, key=lambda task: getattr(task, key), reverse=reverse)
+        return sorted(
+            self.tasks, key=lambda task: getattr(task, key), reverse=reverse
+        )
 
 
-if __name__ == '__main__':
-    task1 = Task('Посмотреть фильм', '       ', date(2025, 4, 12), 2)
-    task2 = Task('Приготовить ужин', 'Блюдо должно быть вкусным', date(2025, 4, 12), 1)
-    task3 = Task('Пойти в спортзал', '', date(2025, 4, 14), 0)
+if __name__ == "__main__":
+    task1 = Task("Посмотреть фильм", "       ", date(2025, 4, 12), 2)
+    task2 = Task(
+        "Приготовить ужин", "Блюдо должно быть вкусным", date(2025, 4, 12), 1
+    )
+    task3 = Task("Пойти в спортзал", "", date(2025, 4, 14), 0)
 
     todolist = TodoList()
     todolist.add_task(task1)
     todolist.add_task(task2)
     todolist.add_task(task3)
-    todolist.get_sorted_tasks('priority', True)
+    todolist.get_sorted_tasks("priority", True)
     todolist.set_completed(task2.id)
     todolist.get_all_tasks()
     print(todolist.get_task(task3.id).id)

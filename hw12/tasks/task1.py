@@ -105,3 +105,151 @@ set_completed и get_task.
 Добавьте докстринги (описание классов и методов) и аннотации типов (указание
 типов параметров и возвращаемых значений) для каждого метода и класса.
 """
+
+
+from uuid import uuid4
+
+
+class Task:
+    """Класс, описывающий задачу.
+
+    Args:
+        name: Имя задачи.
+        description: Описание задачи.
+        deadline: Срок исполнения задачи.
+        priority: Приоритет задачи(по умолчанию 1).
+
+    Attributes:
+        id: Уникальный идентификатор задачи.
+        name: Имя задачи.
+        description: Описание задачи.
+        deadline: Срок исполнения задачи.
+        priority: Приоритет задачи(по умолчанию 1).
+
+    """
+    def __init__(self, name: str, description: str, deadline: str, priority: int = 1):
+        """
+        Инициализация объекта класса Task.
+
+        Args:
+            name: Имя задачи.
+            description: Описание задачи.
+            deadline: Срок исполнения задачи.
+            priority: Приоритет задачи(по умолчанию 1).
+        """
+        self.id = str(uuid4())
+        self.name = name
+        self.description = description
+        self.deadline = deadline
+        self.priority = priority
+
+    def get_info(self) -> str:
+        """
+        Возвращает информацию о задаче в определенном формате.
+
+        Returns:
+            Информация о задаче в формате:
+            --------------------
+            <Имя задачи> - <приоритет>
+
+            > <Описание задачи> (если есть)
+
+            <дедлайн>
+            --------------------
+        """
+        return (f'--------------------\n'
+                f'{self.name.capitalize()} - {self.priority}\n\n'
+                f'{self.description + '\n\n' if self.description else ""}'
+                f'{self.deadline}\n'
+                f'--------------------')
+
+
+class TodoList:
+    """Класс, описывающий список дел.
+
+    Attributes:
+        tasks: Список дел.
+    """
+    def __init__(self):
+        """Инициализация объекта класса TodoList."""
+        self.tasks = []
+
+    def search_task(self, search_key: str) -> Task:
+        """
+        Ищет задачу в списке дел.
+
+        Args:
+            search_key: Ключ по которому осуществляется поиск.
+
+        Returns:
+            Объект класса Task с заданным идентификатором.
+        """
+        for task in self.tasks:
+            if search_key == task.id:
+                return task
+
+        raise ValueError(f'`Задача {search_key} не найдена')
+
+    def add_task(self, task: Task):
+        """Добавляет задачу в список дел."""
+        self.tasks.append(task)
+
+    def set_completed(self, task_id: str):
+        """
+        Удаляет задачу из списка дел по ее id.
+
+        Args:
+            task_id: Идентификатор задачи.
+        """
+        self.tasks.remove(self.search_task(task_id))
+
+    def get_task(self, task_id: str) -> Task:
+        """
+        Возвращает задачу по ее id.
+
+        Args:
+            task_id: Идентификатор задачи.
+
+        Returns:
+            Объект класса Task с заданным идентификатором.
+        """
+        return self.search_task(task_id)
+
+    def get_all_tasks(self) -> list:
+        """
+        Возвращает все задачи из списка дел.
+
+        Returns:
+            Список всех задач из списка дел.
+        """
+        return self.tasks
+
+    def sorted_tasks(self, key: str = 'deadline', reverse: bool = False) -> list:
+        """
+        Сортирует задачи из списка дел.
+
+        Args:
+            key: Ключ для сортировки задач.
+            reverse: Порядок сортировки задач.
+
+        Returns:
+            Список отсортированных задач из списка дел.
+        """
+        return sorted(self.tasks, key=lambda task: getattr(task, key), reverse=reverse)
+
+
+if __name__ == '__main__':
+    task1 = Task('Посмотреть фильм', '', '20.03.2023', 2)
+    task2 = Task('Приготовить ужин', 'Блюдо должно быть вкусным', '20.03.2023', 1)
+    task3 = Task('Пойти в спортзал', '', '20.03.2023', 0)
+
+    todolist = TodoList()
+    todolist.add_task(task1)
+    todolist.add_task(task2)
+    todolist.add_task(task3)
+    print('Первый вывод:')
+    print(*[x.get_info() for x in todolist.sorted_tasks('priority', True)], sep='\n\n')
+    todolist.set_completed(task2.id)
+    print('\nВторой вывод:')
+    print(*[x.get_info() for x in todolist.get_all_tasks()], sep='\n\n')
+

@@ -108,6 +108,7 @@ set_completed и get_task.
 
 
 from uuid import uuid4
+from datetime import date
 
 
 class Task:
@@ -127,7 +128,7 @@ class Task:
         priority: Приоритет задачи(по умолчанию 1).
 
     """
-    def __init__(self, name: str, description: str, deadline: str, priority: int = 1):
+    def __init__(self, name: str, description: str, deadline: date, priority: int = 1):
         """
         Инициализация объекта класса Task.
 
@@ -159,8 +160,8 @@ class Task:
         """
         return (f'--------------------\n'
                 f'{self.name.capitalize()} - {self.priority}\n\n'
-                f'{self.description + '\n\n' if self.description else ""}'
-                f'{self.deadline}\n'
+                f'{'> ' + self.description + '\n\n' if self.description.strip() else ""}'
+                f'{self.deadline.strftime("%d.%m.%Y")}\n'
                 f'--------------------')
 
 
@@ -172,12 +173,13 @@ def print_info(func):
 
     def wrapper(*args, **kwargs):
         global output_number
-        print(str(output_number) + '-ый вывод:')
+        print(str(output_number) + '-й вывод:')
         for number, task in enumerate(func(*args, **kwargs)):
-            print(f'\t {number + 1}-ая задача:')
+            print(f'\t {number + 1}-я задача:')
             print(*map(lambda x: '\t' + x + '\n', task.get_info().split('\n')))
         print()
         output_number += 1
+        return func(*args, **kwargs)
 
     return wrapper
 
@@ -206,7 +208,7 @@ class TodoList:
             if search_key == task.id:
                 return task
 
-        raise ValueError(f'`Задача {search_key} не найдена')
+        raise ValueError(f'Задача {search_key} не найдена')
 
     def add_task(self, task: Task):
         """Добавляет задачу в список дел."""
@@ -244,7 +246,7 @@ class TodoList:
         return self.tasks
 
     @print_info
-    def sorted_tasks(self, key: str = 'deadline', reverse: bool = False) -> list:
+    def get_sorted_tasks(self, key: str = 'deadline', reverse: bool = False) -> list:
         """
         Сортирует задачи из списка дел.
 
@@ -259,15 +261,15 @@ class TodoList:
 
 
 if __name__ == '__main__':
-    task1 = Task('Посмотреть фильм', '', '20.03.2023', 2)
-    task2 = Task('Приготовить ужин', 'Блюдо должно быть вкусным', '20.03.2023', 1)
-    task3 = Task('Пойти в спортзал', '', '20.03.2023', 0)
+    task1 = Task('Посмотреть фильм', '       ', date(2025, 4, 12), 2)
+    task2 = Task('Приготовить ужин', 'Блюдо должно быть вкусным', date(2025, 4, 12), 1)
+    task3 = Task('Пойти в спортзал', '', date(2025, 4, 14), 0)
 
     todolist = TodoList()
     todolist.add_task(task1)
     todolist.add_task(task2)
     todolist.add_task(task3)
-    todolist.sorted_tasks('priority', True)
+    todolist.get_sorted_tasks('priority', True)
     todolist.set_completed(task2.id)
     todolist.get_all_tasks()
-
+    print(todolist.get_task(task3.id).id)

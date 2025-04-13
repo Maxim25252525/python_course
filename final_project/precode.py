@@ -1,82 +1,10 @@
+import random
+import sys
+
+
 CELL_DESIGN = {"empty": "▢", "tank": "▣", "miss": "◼", "hit": "✘"}
 
 coordinates_dict = {"а": 0, "б": 1, "в": 2, "г": 3, "д": 4, "е": 5, "ж": 6, "з": 7, "и": 8, "к": 9}
-
-
-def converted_coords(coords: list) -> list:
-    """
-    Переводит координаты в индексы.
-    Args:
-        coords: Список координат танка.
-
-    Returns:
-        Список в формате ((кор1, кор2), колонка).
-    """
-    result = []
-    for coord in coords:
-        column = coordinates_dict[coord[0].lower()]  # Колонка.
-        if len(coord) >= 4:
-            coord1 = int(coord[1]) - 1  # Первая координата.
-            coord2 = int(coord[3:]) - 1  # Вторая координата.
-            result.append(((coord1, coord2), column))
-        else:
-            cord1 = int(coord[1:]) - 1  # Координата.
-            result.append(((cord1, cord1), column))
-
-    return result
-
-
-def check_tank_coordinate(searched_coord: tuple, coordinates: list) -> bool:
-    """Проверяет корректность координаты танка на поле.
-
-    Args:
-        searched_coord: Координаты искомого танка.
-        coordinates: Список координат всех танков на поле.
-
-    Returns:
-        True - если координаты танка корректны, False - если нет.
-    """
-    is_correctly = True
-    for coord in coordinates:
-        if searched_coord == coord:
-            continue
-        rows, column = coord[0], coord[1]
-        if searched_coord[0][0] - 1 <= rows[1] and searched_coord[0][1] + 1 >= rows[0]:
-            if searched_coord[1] - 1 <= column <= searched_coord[1] + 1:
-                is_correctly = False
-                break
-
-    return is_correctly
-
-
-def check_tanks_coordinates(coordinates: list) -> bool:
-    """Проверяет корректность координат танков на поле.
-
-    Args:
-        coordinates: Список координат всех танков на поле.
-
-    Returns:
-        True - если координаты танков корректны, False - если нет.
-    """
-    for coord in coordinates:
-        if check_tank_coordinate(coord, tanks):
-            user_field.tanks = [Tank(tank[0], tank[1]) for tank in coordinates]
-        else:
-            print("Некорректные координаты танков!")
-            return False
-
-    return True
-
-
-def tip() -> str:
-    """
-    Выводит подсказку для игрока если он правильно решил пример.
-
-    Returns:
-        Подсказка игрока.
-    """
-    ...
-
 
 
 class Tank:
@@ -115,7 +43,7 @@ class Field:
         """Заполняет поле условными символами."""
         # Расстановка танков на поле.
         for tank in self.tanks:
-            for row in tank.rows:
+            for row in range(tank.rows[0], tank.rows[1] + 1):
                 self.data[row][tank.column] = CELL_DESIGN["tank"]
         # Расстановка выстрелов на поле.
         for shot in self.shots:
@@ -145,6 +73,126 @@ def print_fields(player_field: Field, computer_field: Field):
     print(result)
 
 
+def converted_coords(coords: list) -> list:
+    """
+    Переводит координаты в индексы.
+    Args:
+        coords: Список координат танка.
+
+    Returns:
+        Список в формате ((кор1, кор2), колонка).
+    """
+    result = []
+    for coord in coords:
+        column = coordinates_dict[coord[0].lower()]  # Колонка.
+        if len(coord) >= 4:
+            coord1 = int(coord[1]) - 1  # Первая координата.
+            coord2 = int(coord[3:]) - 1  # Вторая координата.
+            result.append(Tank((coord1, coord2), column))
+        else:
+            cord1 = int(coord[1:]) - 1  # Координата.
+            result.append(Tank((cord1, cord1), column))
+
+    return result
+
+
+def check_tank_coordinate(searched_coord: Tank, coordinates: list[Tank]) -> bool:
+    """Проверяет корректность координаты танка на поле.
+
+    Args:
+        searched_coord: Координаты искомого танка.
+        coordinates: Список координат всех танков на поле.
+
+    Returns:
+        True - если координаты танка корректны, False - если нет.
+    """
+    is_correctly = True
+    for coord in coordinates:
+        if searched_coord == coord:
+            continue
+        rows, column = coord.rows, coord.column
+        if searched_coord.rows[0] - 1 <= rows[1] and searched_coord.rows[1] + 1 >= rows[0]:
+            if searched_coord.column - 1 <= column <= searched_coord.column + 1:
+                is_correctly = False
+                break
+
+    return is_correctly
+
+
+def check_tanks_coordinates(coordinates: list) -> bool:
+    """Проверяет корректность координат танков на поле.
+
+    Args:
+        coordinates: Список координат всех танков на поле.
+
+    Returns:
+        True - если координаты танков корректны, False - если нет.
+    """
+    for coord in coordinates:
+        if check_tank_coordinate(coord, tanks):
+            return True
+        else:
+            print("Некорректные координаты танков!")
+            return False
+
+    return True
+
+
+def tip():
+    """Выводит подсказку для игрока если он правильно решил пример."""
+    a = random.randint(1, 1000)
+    b = random.randint(1, 1000)
+    c = a + b
+    answer = input(f'Решите пример: {a} + {b} = ')
+    if int(answer) == c:
+        pass
+    else:
+        print("Неправильно!")
+
+
+def check_exit(cmd):
+    """Завершает программу если игрок решил выйти."""
+    if cmd == "выход":
+        print("Игра окончена!")
+        sys.exit()
+
+
+def conv_cmd(cmd: str) -> str:
+    """
+    Удаляет лишние пробелы и переводит все буквы в нижний регистр
+    из команды игрока.
+
+    Args:
+        cmd: Команда игрока.
+
+    Returns:
+        Отформатированная команда игрока.
+    """
+    return cmd.strip().lower()
+
+
+def create_tanks(tanks_list: list):
+    """Создает случайные координаты танков на поле.
+
+    Args:
+        tanks_list: Список координат всех танков на поле.
+    """
+    for _ in range(10):
+        x = [random.randint(0, 9) for _ in range(2)]
+        coord1 = min(x)  # Первая координата.
+        coord2 = max(x)  # Вторая координата.
+        column = random.randint(0, 9)  # Колонка.
+        tank_coord = Tank((coord1, coord2), column)  # Создание координаты танка.
+        while (not check_tank_coordinate(tank_coord, tanks_list) or
+               coord2 - coord1 + 1 > 5 or tank_coord in tanks_list):
+            x = [random.randint(0, 9) for _ in range(2)]
+            coord1 = min(x)  # Первая координата.
+            coord2 = max(x)  # Вторая координата.
+            column = random.randint(0, 9)  # Колонка.
+            tank_coord = Tank((coord1, coord2), column)  # Создание координаты танка.
+        tanks_list.append(tank_coord)
+
+
 if __name__ == "__main__":
     # Пример использования функции отрисовки поля.
     # player_field_example = Field()
@@ -158,33 +206,58 @@ if __name__ == "__main__":
     #
     # computer_field_example = Field()
     # computer_field_example.shots = [Shot(9, 2), Shot(6, 6)]
-    #
     # print_fields(player_field_example, computer_field_example)
+
     print("Привет! Это игра танковый бой!",
           "Если вы хотите ознакомиться с правилами игры, напишите 'помощь'.",
           "Чтобы начать игру, вам нужно написать 'старт'.", sep="\n")
 
-    command = input("> ").strip()
-    while command != "выход":
-        match command:
-            case "помощь":
-                print("Правила игры: ")
-                command = input("> ").strip()
-            case "старт":
-                print("Игра началась!")
-                user_field = Field()
+    command = conv_cmd(input("> "))
+    check_exit(command)
+    match command:
+        case "помощь":
+            print("Правила игры: ")
+            command = conv_cmd(input("> "))
+            check_exit(command)
 
-                tanks = input("Введите координаты ваших танков через пробел: ").split()
-                tanks = converted_coords(tanks)  # конвертируем координаты танков
-                while not check_tanks_coordinates(tanks):
-                    tanks = input("Введите координаты ваших танков через пробел: ").split()
-                    tanks = converted_coords(tanks)
+        case "старт":
+            # Начало программы, создаем поля игрока и компьютера.
+            # Создаём танки для компьютера.
+            print("Игра началась!")
+            user_field = Field()
+            computer_field = Field()
+            tanks = []
+            create_tanks(tanks)
+            computer_field.tanks = tanks
+            print_fields(user_field, computer_field)
 
-                command = input("Введите координаты вашего выстрела или воспользуйтесь подсказкой: ").strip()
-                if command == "подсказка":
-                    tip()
-            case _:
-                print("Такой команды нет! Попробуйте еще раз!")
-                command = input("> ").strip()
+            command = conv_cmd(input("Введите координаты ваших танков через пробел: "))
+            check_exit(command)
+            tanks = command.split()
+            tanks = converted_coords(tanks)  # конвертируем координаты танков
+            while not check_tanks_coordinates(tanks):
+                command = conv_cmd(input("Введите координаты ваших танков через пробел: "))
+                check_exit(command)
+                tanks = command.split()
+                tanks = converted_coords(tanks)
+            user_field.tanks = tanks
+            print(user_field.tanks)
+
+            command = conv_cmd(input("Введите координаты вашего выстрела или воспользуйтесь подсказкой: "))
+            check_exit(command)
+            if command == "подсказка":
+                tip()
+                command = conv_cmd(input("Введите координаты вашего выстрела или воспользуйтесь подсказкой: "))
+                check_exit(command)
+
+            user_shot = Shot(int(command[1:]), coordinates_dict[command[0]])
+            user_field.shots.append(user_shot)
+            print_fields(user_field, computer_field)
+
+        case _:
+            print("Такой команды нет! Попробуйте еще раз!")
+            command = conv_cmd(input("> "))
+            check_exit(command)
+
     # cors = [[(0, 1), 0], [(2, 3), 3], [(0, 1), 4], [(3, 4), 4]]
     # print(check_tank_coordinate([(2, 3), 3], cors))

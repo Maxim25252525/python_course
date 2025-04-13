@@ -30,7 +30,7 @@ class Field:
     - условных обозначений из CELL_DESIGN.
     """
 
-    def __init__(self):
+    def __init__(self, player: bool = True):
         # Заполнение пустого поля.
         self.data = [
             [CELL_DESIGN["empty"] for column in range(10)] for row in range(10)
@@ -38,13 +38,15 @@ class Field:
         # Нужно заполнять только для пользовательского поля.
         self.tanks: list[Tank] = []
         self.shots: list[Shot] = []
+        self.player = player
 
     def fill_field(self):
         """Заполняет поле условными символами."""
         # Расстановка танков на поле.
-        for tank in self.tanks:
-            for row in range(tank.rows[0], tank.rows[1] + 1):
-                self.data[row][tank.column] = CELL_DESIGN["tank"]
+        if self.player:
+            for tank in self.tanks:
+                for row in range(tank.rows[0], tank.rows[1] + 1):
+                    self.data[row][tank.column] = CELL_DESIGN["tank"]
         # Расстановка выстрелов на поле.
         for shot in self.shots:
             self.data[shot.row][shot.column] = (
@@ -52,7 +54,7 @@ class Field:
             )
 
 
-def print_fields(player_field: Field, computer_field: Field):
+def print_fields(player_field: Field, comp_field: Field):
     # Создание заголовка с буквами, где THSP - символ тонкого пробела.
     letters = "  ".join(list("АБВГДЕЖЗИК"))
     letters = letters.replace("Д", " Д")
@@ -60,10 +62,10 @@ def print_fields(player_field: Field, computer_field: Field):
 
     # Актуализируем данные на полях.
     player_field.fill_field()
-    computer_field.fill_field()
+    comp_field.fill_field()
 
     for index, row_data in enumerate(
-        zip(player_field.data, computer_field.data)
+        zip(player_field.data, comp_field.data)
     ):
         row_number = f" {index + 1}"[-2:]  # Номер строки из двух символов.
         # Данные пользовательского поля.
@@ -225,7 +227,7 @@ if __name__ == "__main__":
             # Создаём танки для компьютера.
             print("Игра началась!")
             user_field = Field()
-            computer_field = Field()
+            computer_field = Field(False)
             tanks = []
             create_tanks(tanks)
             computer_field.tanks = tanks
@@ -250,9 +252,13 @@ if __name__ == "__main__":
                 command = conv_cmd(input("Введите координаты вашего выстрела или воспользуйтесь подсказкой: "))
                 check_exit(command)
 
-            user_shot = Shot(int(command[1:]), coordinates_dict[command[0]])
-            user_field.shots.append(user_shot)
+            user_shot = Shot(int(command[1:]) - 1, coordinates_dict[command[0]])
+            computer_field.shots.append(user_shot)
             print_fields(user_field, computer_field)
+            if computer_field.data[user_shot.row][user_shot.column] == "✘":
+                print("Вы попали!")
+            else:
+                print("Вы промахнулись!")
 
         case _:
             print("Такой команды нет! Попробуйте еще раз!")

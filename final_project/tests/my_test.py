@@ -20,6 +20,11 @@ from final_project.precode import Tank
             Tank((2, 3), 3),
             [Tank((0, 1), 0), Tank((1, 2), 3), Tank((0, 1), 4), Tank((3, 4), 4)],
             False,
+        ),
+(
+            Tank((2, 3), 3),
+            [Tank((0, 1), 0), Tank((0, 1), 0), Tank((0, 1), 4), Tank((3, 4), 4)],
+            False,
         )
     ]
 )

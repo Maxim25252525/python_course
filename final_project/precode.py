@@ -14,6 +14,14 @@ class Tank:
         self.rows = rows  # Индексы строк, где расположен танк.
         self.column = column  # Индекс столбца, где расположен танк.
 
+    # Метод сравнения объектов
+    # Теперь объекты сравниваются по атрибутам.
+    def __eq__(self, other):
+        if not isinstance(other, Tank):
+            return False
+        return (self.rows == other.rows and
+                self.column == other.column)
+
 
 class Shot:
 
@@ -121,7 +129,8 @@ def check_tank_coordinate(searched_coord: Tank, coordinates: list[Tank]) -> bool
     is_correctly = True
     for coord in coordinates:
         rows, column = coord.rows, coord.column
-        if searched_coord.rows == rows and searched_coord.column == column:
+        if (searched_coord.rows == rows and searched_coord.column == column and
+                coordinates.count(coord) == 1):
             continue
         if searched_coord.rows[0] - 1 <= rows[1] and searched_coord.rows[1] + 1 >= rows[0]:
             if searched_coord.column - 1 <= column <= searched_coord.column + 1:
@@ -211,7 +220,7 @@ def tip(field: Field):
         y += 1
         field.shots.append(player_shot)
         print("Правильно!"
-              f"Ваша подсказка: в клетке {x}{y} нет танка!")
+              f"Ваша подсказка: в клетке {x}{y} нет танка!", sep="\n")
     else:
         print("Неправильно!")
 
@@ -260,65 +269,86 @@ def create_tanks(tanks_list: list):
 
 
 if __name__ == "__main__":
-    # print("Привет! Это игра танковый бой!",
-    #       "Если вы хотите ознакомиться с правилами игры, напишите 'помощь'.",
-    #       "Чтобы начать игру, вам нужно написать 'старт'.", sep="\n")
-
-    a = [Tank((0, 1), 0), Tank((3, 3), 1), Tank((0, 1), 4), Tank((3, 4), 4)]
-    print(check_tank_coordinate(Tank((0, 1), 0), a))
+    print("Привет! Это игра танковый бой!",
+          "Если вы хотите ознакомиться с правилами игры, напишите 'помощь'.",
+          "Чтобы начать игру, вам нужно написать 'старт'.", sep="\n")
 
     command = conv_cmd(input("> "))
+    # command = 'старт'
     check_exit(command)
-    match command:
-        case "помощь":
-            print("Правила игры: ")
-            command = conv_cmd(input("> "))
-            check_exit(command)
+    while True:
+        match command:
+            case "помощь":
+                print("Правила игры: ")
+                command = conv_cmd(input("> "))
+                check_exit(command)
 
-        case "старт":
-            # Начало программы, создаем поля для игрока и компьютера.
-            # Создаём танки для компьютера.
-            print("Игра началась!")
-            user_field = Field()
-            computer_field = Field(False)
-            tanks = []
-            create_tanks(tanks)
-            computer_field.tanks = tanks
-            print_fields(user_field, computer_field)
+            case "старт":
+                # Начало программы, создаем поля для игрока и компьютера.
+                # Создаём танки для компьютера.
+                print("Игра началась!")
+                user_field = Field()
+                computer_field = Field()
+                tanks = []
+                create_tanks(tanks)
+                computer_field.tanks = tanks
+                print_fields(user_field, computer_field)
 
-            # Создаем танки для игрока.
-            command = conv_cmd(input("Введите координаты ваших танков через пробел: "))
-            check_exit(command)
-            tanks = command.split()
-            tanks = converted_coords(tanks)  # конвертируем координаты танков
-            while not check_tanks_coordinates(tanks):
+                # Создаем танки для игрока.
                 command = conv_cmd(input("Введите координаты ваших танков через пробел: "))
                 check_exit(command)
                 tanks = command.split()
-                tanks = converted_coords(tanks)
-            user_field.tanks = tanks
-            print(user_field.tanks)
+                tanks = converted_coords(tanks)  # конвертируем координаты танков
+                while not check_tanks_coordinates(tanks):
+                    command = conv_cmd(input("Введите координаты ваших танков через пробел: "))
+                    check_exit(command)
+                    tanks = command.split()
+                    tanks = converted_coords(tanks)
+                user_field.tanks = tanks
 
-            # Алгоритм самой игры.
-            command = conv_cmd(input("Введите координаты вашего выстрела или воспользуйтесь подсказкой: "))
-            check_exit(command)
-            if command == "подсказка":
-                tip(user_field)
+                # Алгоритм самой игры.
+
+                # TODO:
+                #  Глобально, нужно доделать логику самой игры.
+                #  То есть добавить возможность производить выстрелы компьютеру
+                #  И делать ходы по очереди, пока не закончится игра.
+                #  Также нужно добавить всяческие проверки на корректность ввода координат,
+                #  причем как танков, так и выстрелов.
+                #
+                # TODO:
+                #  > Если понадобится делать проверку на наличие в клетки выстрела или танка
+                #    можно использовать функцию "check_available_shot".
+                #  > После каждого ввода пользователя нужно использовать "conv_cmd".
+                #  > Также нужно использовать "check_exit", чтобы в случае чего завершать игру.
+                #
+                # TODO:
+                #  Желательно вынести все функции в отдельный файл.
+                #  Также нужно разобраться, когда стоит очищать терминал.
+                #  Чтобы скрыть танки компьютера нужно добавить False в
+                #  computer_field (находиться где-то в начале блока main, после приветствия).
+
                 command = conv_cmd(input("Введите координаты вашего выстрела или воспользуйтесь подсказкой: "))
                 check_exit(command)
+                if command == "подсказка":
+                    tip(computer_field)
+                    command = conv_cmd(input("Введите координаты вашего выстрела: "))
+                    check_exit(command)
 
-            user_shot = Shot(int(command[1:]) - 1, coordinates_dict[command[0]])
-            computer_field.shots.append(user_shot)
-            print_fields(user_field, computer_field)
-            if computer_field.data[user_shot.row][user_shot.column] == "✘":
-                print("Вы попали!")
-            else:
-                print("Вы промахнулись!")
+                user_shot = Shot(int(command[1:]) - 1, coordinates_dict[command[0]])
+                if computer_field.data[user_shot.row][user_shot.column] == "▣":
+                    user_shot.hit = True
+                    computer_field.shots.append(user_shot)
+                    print_fields(user_field, computer_field)
+                    print("Вы попали!")
+                else:
+                    computer_field.shots.append(user_shot)
+                    print_fields(user_field, computer_field)
+                    print("Вы промахнулись!")
 
-        case _:
-            print("Такой команды нет! Попробуйте еще раз!")
-            command = conv_cmd(input("> "))
-            check_exit(command)
+            case _:
+                print("Такой команды нет! Попробуйте еще раз!")
+                command = conv_cmd(input("> "))
+                check_exit(command)
 
     # cors = [[(0, 1), 0], [(2, 3), 3], [(0, 1), 4], [(3, 4), 4]]
     # print(check_tank_coordinate([(2, 3), 3], cors))

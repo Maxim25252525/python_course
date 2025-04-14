@@ -1,23 +1,24 @@
 import pytest
 from final_project import precode
+from final_project.precode import Tank
 
 
 @pytest.mark.parametrize(
     ("coordinate", "expression", "result"),
     [
         (
-            ((0, 1), 0),
-            [[(0, 1), 0], [(2, 3), 1], [(0, 1), 4], [(3, 4), 4]],
-            False,
-        ),
-        (
-            ((0, 1), 0),
-            [[(0, 1), 0], [(1, 3), 2], [(0, 1), 4], [(3, 4), 4]],
+            Tank((0, 1), 0),
+            [Tank((0, 1), 0), Tank((3, 3), 1), Tank((0, 1), 4), Tank((3, 4), 4)],
             True,
         ),
         (
-            ((2, 3), 3),
-            [[(0, 1), 0], [(1, 2, 3), 3], [(0, 1), 4], [(3, 4), 4]],
+            Tank((0, 1), 0),
+            [Tank((0, 1), 0), Tank((1, 3), 2), Tank((0, 1), 4), Tank((3, 4), 4)],
+            True,
+        ),
+        (
+            Tank((2, 3), 3),
+            [Tank((0, 1), 0), Tank((1, 2), 3), Tank((0, 1), 4), Tank((3, 4), 4)],
             False,
         )
     ]

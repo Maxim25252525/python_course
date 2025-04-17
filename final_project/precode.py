@@ -4,8 +4,28 @@ import sys
 
 CELL_DESIGN = {"empty": "▢", "tank": "▣", "miss": "◼", "hit": "✘"}
 
-coordinates_dict = {"а": 0, "б": 1, "в": 2, "г": 3, "д": 4, "е": 5, "ж": 6, "з": 7, "и": 8, "к": 9,
-                    0: "а", 1: "б", 2: "в", 3: "г", 4: "д", 5: "е", 6: "ж", 7: "з", 8: "и", 9: "к"}
+coordinates_dict = {
+    "а": 0,
+    "б": 1,
+    "в": 2,
+    "г": 3,
+    "д": 4,
+    "е": 5,
+    "ж": 6,
+    "з": 7,
+    "и": 8,
+    "к": 9,
+    0: "а",
+    1: "б",
+    2: "в",
+    3: "г",
+    4: "д",
+    5: "е",
+    6: "ж",
+    7: "з",
+    8: "и",
+    9: "к",
+}
 
 
 class Tank:
@@ -13,14 +33,14 @@ class Tank:
     def __init__(self, rows: tuple[int, int], column: int):
         self.rows = rows  # Индексы строк, где расположен танк.
         self.column = column  # Индекс столбца, где расположен танк.
+        self.length = 1 + rows[1] - rows[0]  # Длина танка.
 
     # Метод сравнения объектов
     # Теперь объекты сравниваются по атрибутам.
     def __eq__(self, other):
         if not isinstance(other, Tank):
             return False
-        return (self.rows == other.rows and
-                self.column == other.column)
+        return self.rows == other.rows and self.column == other.column
 
 
 class Shot:
@@ -75,16 +95,14 @@ class Field:
 def print_fields(player_field: Field, comp_field: Field):
     # Создание заголовка с буквами, где THSP - символ тонкого пробела.
     letters = "  ".join(list("АБВГДЕЖЗИК"))
-    letters = letters.replace("Д", " Д")
-    result = f"   {letters}         {letters}\n"
+    # letters = letters.replace("Д", " Д")
+    result = f"    {letters}         {letters}\n"
 
     # Актуализируем данные на полях.
     player_field.fill_field()
     comp_field.fill_field()
 
-    for index, row_data in enumerate(
-        zip(player_field.data, comp_field.data)
-    ):
+    for index, row_data in enumerate(zip(player_field.data, comp_field.data)):
         row_number = f" {index + 1}"[-2:]  # Номер строки из двух символов.
         # Данные пользовательского поля.
         result += f"{row_number} {' '.join(row_data[0])}"
@@ -116,7 +134,9 @@ def converted_coords(coords: list) -> list:
     return result
 
 
-def check_tank_coordinate(searched_coord: Tank, coordinates: list[Tank]) -> bool:
+def check_tank_coordinate(
+    searched_coord: Tank, coordinates: list[Tank]
+) -> bool:
     """Проверяет корректность координаты танка на поле.
 
     Args:
@@ -129,11 +149,21 @@ def check_tank_coordinate(searched_coord: Tank, coordinates: list[Tank]) -> bool
     is_correctly = True
     for coord in coordinates:
         rows, column = coord.rows, coord.column
-        if (searched_coord.rows == rows and searched_coord.column == column and
-                coordinates.count(coord) == 1):
+        if (
+            searched_coord.rows == rows
+            and searched_coord.column == column
+            and coordinates.count(coord) == 1
+        ):
             continue
-        if searched_coord.rows[0] - 1 <= rows[1] and searched_coord.rows[1] + 1 >= rows[0]:
-            if searched_coord.column - 1 <= column <= searched_coord.column + 1:
+        if (
+            searched_coord.rows[0] - 1 <= rows[1]
+            and searched_coord.rows[1] + 1 >= rows[0]
+        ):
+            if (
+                searched_coord.column - 1
+                <= column
+                <= searched_coord.column + 1
+            ):
                 is_correctly = False
                 break
 
@@ -159,10 +189,10 @@ def check_tanks_coordinates(coordinates: list) -> bool:
     return True
 
 
-def check_available_shot(shot: Shot, field: Field, kind: str = 'tank') -> bool:
+def check_hit(shot: Shot, field: Field, kind: str = "tank") -> tuple:
     """
-    Проверяет доступность выстрела.
-    Функция возвращает False в двух случаях:
+    Проверяет попадание выстрела в танк или повторное попадание.
+    Функция возвращает True в двух случаях:
     1. Если на месте выстрела есть танк.
     2. Если в это место уже стреляли.
     Выбор случая определяется параметром kind.
@@ -173,24 +203,29 @@ def check_available_shot(shot: Shot, field: Field, kind: str = 'tank') -> bool:
         kind: Тип списка, в котором ищется выстрел('tank' или 'shot').
 
     Returns:
-        True - если в выстрел есть в выбранном списке, False - если нет.
+        Кортеж, содержащий логический тип и объект танка или выстрела.
+        True - если выстрел есть в выбранном списке, False - если нет.
     """
-    if kind == 'tank':
+    if kind == "tank":
         arr = field.tanks
         for coord in arr:
-            if (coord.rows[0] <= shot.row <= coord.rows[1] and
-                    coord.column == shot.column):
-                return True
-    elif kind == 'shot':
+            if (
+                coord.rows[0] <= shot.row <= coord.rows[1]
+                and coord.column == shot.column
+            ):
+                return True, coord
+    elif kind == "shot":
         arr = field.shots
         for coord in arr:
             if coord == shot:
-                return True
+                return True, coord
     else:
-        raise ValueError(f"Функция 'check_available_shot' не принимает "
-                         f"значение '{kind}' в качестве аргумента 'kind'.")
+        raise ValueError(
+            f"Функция 'check_available_shot' не принимает "
+            f"значение '{kind}' в качестве аргумента 'kind'."
+        )
 
-    return False
+    return False, None
 
 
 def tip(field: Field):
@@ -203,24 +238,27 @@ def tip(field: Field):
     a = random.randint(1, 1000)
     b = random.randint(1, 1000)
     c = a + b
-    answer = input(f'Решите пример: {a} + {b} = ')
+    answer = input(f"Решите пример: {a} + {b} = ")
     if int(answer) == c:
         x = random.randint(0, 9)
         y = random.randint(0, 9)
         player_shot = Shot(x, y)
 
-        if check_available_shot(player_shot, field):
-            while check_available_shot(player_shot, field):
+        if check_hit(player_shot, field)[0]:
+            while check_hit(player_shot, field)[0]:
                 x = random.randint(0, 9)
                 y = random.randint(0, 9)
                 player_shot = Shot(x, y)
 
         # Трансформация индексов в координату.
-        x = coordinates_dict[x]
-        y += 1
+        x += 1
+        y = coordinates_dict[y]
         field.shots.append(player_shot)
-        print("Правильно!"
-              f"Ваша подсказка: в клетке {x}{y} нет танка!", sep="\n")
+        print(
+            "Правильно!",
+            f"Ваша подсказка: в клетке {y}{x} нет танка!",
+            sep="\n",
+        )
     else:
         print("Неправильно!")
 
@@ -257,21 +295,53 @@ def create_tanks(tanks_list: list):
         coord1 = min(x)  # Первая координата.
         coord2 = max(x)  # Вторая координата.
         column = random.randint(0, 9)  # Колонка.
-        tank_coord = Tank((coord1, coord2), column)  # Создание координаты танка.
-        while (not check_tank_coordinate(tank_coord, tanks_list) or
-               coord2 - coord1 + 1 > 5 or tank_coord in tanks_list):
+        tank_coord = Tank(
+            (coord1, coord2), column
+        )  # Создание координаты танка.
+        while (
+            not check_tank_coordinate(tank_coord, tanks_list)
+            or coord2 - coord1 + 1 > 5
+            or tank_coord in tanks_list
+        ):
             x = [random.randint(0, 9) for _ in range(2)]
             coord1 = min(x)  # Первая координата.
             coord2 = max(x)  # Вторая координата.
             column = random.randint(0, 9)  # Колонка.
-            tank_coord = Tank((coord1, coord2), column)  # Создание координаты танка.
+            tank_coord = Tank(
+                (coord1, coord2), column
+            )  # Создание координаты танка.
         tanks_list.append(tank_coord)
 
 
+def check_destroyed_tank(field: Field, shot: Shot) -> tuple:
+    """
+    Проверяет, не уничтожен ли танк при выстреле игрока.
+
+    Args:
+        field: Поле игрока или компьютера.
+        shot: Выстрел игрока или компьютера.
+
+    Returns:
+        Кортеж, содержащий логический тип и объект танка.
+        True - если танк был уничтожен. False - если нет.
+    """
+    if check_hit(shot, field)[0]:
+        tank = check_hit(shot, field)[1]
+        for row in range(tank.rows[0], tank.rows[1] + 1):
+            if field.data[row][shot.column] == "✘":
+                continue
+            return False, None
+
+        return True, tank
+
+
 if __name__ == "__main__":
-    print("Привет! Это игра танковый бой!",
-          "Если вы хотите ознакомиться с правилами игры, напишите 'помощь'.",
-          "Чтобы начать игру, вам нужно написать 'старт'.", sep="\n")
+    print(
+        "Привет! Это игра танковый бой!",
+        "Если вы хотите ознакомиться с правилами игры, напишите 'помощь'.",
+        "Чтобы начать игру, вам нужно написать 'старт'.",
+        sep="\n",
+    )
 
     command = conv_cmd(input("> "))
     # command = 'старт'
@@ -295,12 +365,18 @@ if __name__ == "__main__":
                 print_fields(user_field, computer_field)
 
                 # Создаем танки для игрока.
-                command = conv_cmd(input("Введите координаты ваших танков через пробел: "))
+                command = conv_cmd(
+                    input("Введите координаты ваших танков через пробел: ")
+                )
                 check_exit(command)
                 tanks = command.split()
-                tanks = converted_coords(tanks)  # конвертируем координаты танков
+                tanks = converted_coords(
+                    tanks
+                )  # конвертируем координаты танков
                 while not check_tanks_coordinates(tanks):
-                    command = conv_cmd(input("Введите координаты ваших танков через пробел: "))
+                    command = conv_cmd(
+                        input("Введите координаты ваших танков через пробел: ")
+                    )
                     check_exit(command)
                     tanks = command.split()
                     tanks = converted_coords(tanks)
@@ -327,28 +403,53 @@ if __name__ == "__main__":
                 #  Чтобы скрыть танки компьютера нужно добавить False в
                 #  computer_field (находиться где-то в начале блока main, после приветствия).
 
-                command = conv_cmd(input("Введите координаты вашего выстрела или воспользуйтесь подсказкой: "))
-                check_exit(command)
-                if command == "подсказка":
-                    tip(computer_field)
-                    command = conv_cmd(input("Введите координаты вашего выстрела: "))
+                while computer_field.tanks and user_field.tanks:
+                    command = conv_cmd(
+                        input(
+                            "Введите координаты вашего выстрела или воспользуйтесь подсказкой: "
+                        )
+                    )
                     check_exit(command)
+                    if command == "подсказка":
+                        tip(computer_field)
+                        command = conv_cmd(
+                            input("Введите координаты вашего выстрела: ")
+                        )
+                        check_exit(command)
 
-                user_shot = Shot(int(command[1:]) - 1, coordinates_dict[command[0]])
-                if computer_field.data[user_shot.row][user_shot.column] == "▣":
-                    user_shot.hit = True
-                    computer_field.shots.append(user_shot)
-                    print_fields(user_field, computer_field)
-                    print("Вы попали!")
-                else:
-                    computer_field.shots.append(user_shot)
-                    print_fields(user_field, computer_field)
-                    print("Вы промахнулись!")
+                    user_shot = Shot(
+                        int(command[1:]) - 1, coordinates_dict[command[0]]
+                    )
+                    # Проверяем, попали в танк или нет.
+                    if (
+                        computer_field.data[user_shot.row][user_shot.column]
+                        == "▣"
+                    ):
+                        user_shot.hit = True
+                        computer_field.shots.append(user_shot)
+                        print_fields(user_field, computer_field)
+                        # Проверяем, уничтожен ли танк.
+                        if check_destroyed_tank(computer_field, user_shot)[0]:
+                            tank_id = 0
+                            for i, tank in enumerate(computer_field.tanks):
+                                if (
+                                    tank
+                                    == check_destroyed_tank(
+                                        computer_field, user_shot
+                                    )[1]
+                                ):
+                                    tank_id = i
+                                    break
+                            computer_field.tanks.pop(tank_id)
+                            print("Вражеский танк уничтожен!")
+                        else:
+                            print("Вы попали!")
+                    else:
+                        computer_field.shots.append(user_shot)
+                        print_fields(user_field, computer_field)
+                        print("Вы промахнулись!")
 
             case _:
                 print("Такой команды нет! Попробуйте еще раз!")
                 command = conv_cmd(input("> "))
                 check_exit(command)
-
-    # cors = [[(0, 1), 0], [(2, 3), 3], [(0, 1), 4], [(3, 4), 4]]
-    # print(check_tank_coordinate([(2, 3), 3], cors))

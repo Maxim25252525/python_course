@@ -200,7 +200,7 @@ class TodoList:
         """Инициализация объекта класса TodoList."""
         self.tasks = []
 
-    def search_task(self, search_key: str) -> Task:
+    def search_task(self, search_key: str) -> int:
         """
         Ищет задачу в списке дел.
 
@@ -208,11 +208,11 @@ class TodoList:
             search_key: Ключ по которому осуществляется поиск.
 
         Returns:
-            Объект класса Task с заданным идентификатором.
+            Индекс задачи в списке дел.
         """
-        for task in self.tasks:
+        for index, task in enumerate(self.tasks):
             if search_key == task.id:
-                return task
+                return index
 
         raise ValueError(f"Задача {search_key} не найдена")
 
@@ -227,7 +227,7 @@ class TodoList:
         Args:
             task_id: Идентификатор задачи.
         """
-        self.tasks.remove(self.search_task(task_id))
+        self.tasks.pop(self.search_task(task_id))
 
     def get_task(self, task_id: str) -> Task:
         """
@@ -239,7 +239,7 @@ class TodoList:
         Returns:
             Объект класса Task с заданным идентификатором.
         """
-        return self.search_task(task_id)
+        return self.tasks[self.search_task(task_id)]
 
     @print_info
     def get_all_tasks(self) -> list:

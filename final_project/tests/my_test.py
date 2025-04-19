@@ -69,7 +69,7 @@ def make_tanks(player=True):
     ],
 )
 def test_check_tank_coordinate(coordinate, expression, result):
-    assert check_tank_coordinate(coordinate, expression) == result
+    assert check_tank_coordinate(coordinate, expression)[0] == result
 
 
 @pytest.mark.parametrize(

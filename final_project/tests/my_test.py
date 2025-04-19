@@ -1,6 +1,7 @@
 import pytest
-from final_project import precode
-from final_project.precode import Tank, Shot, Field
+
+from final_project.my_classes import Field, Tank, Shot
+from final_project.my_functions import check_tank_coordinate, check_hit
 
 
 @pytest.fixture
@@ -68,7 +69,7 @@ def make_tanks(player=True):
     ],
 )
 def test_check_tank_coordinate(coordinate, expression, result):
-    assert precode.check_tank_coordinate(coordinate, expression) == result
+    assert check_tank_coordinate(coordinate, expression) == result
 
 
 @pytest.mark.parametrize(
@@ -85,4 +86,4 @@ def test_check_tank_coordinate(coordinate, expression, result):
     ],
 )
 def test_check_hit(make_tanks, shot, result):
-    assert precode.check_hit(shot, make_tanks)[0] == result
+    assert check_hit(shot, make_tanks, 'tank')[0] == result

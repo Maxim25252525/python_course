@@ -1,8 +1,31 @@
 import random
 import sys
 
-from final_project.main import coordinates_dict
-from my_classes import Shot, Tank, Field
+from final_project.my_classes import Shot, Tank, Field
+
+
+coordinates_dict = {
+    "а": 0,
+    "б": 1,
+    "в": 2,
+    "г": 3,
+    "д": 4,
+    "е": 5,
+    "ж": 6,
+    "з": 7,
+    "и": 8,
+    "к": 9,
+    0: "а",
+    1: "б",
+    2: "в",
+    3: "г",
+    4: "д",
+    5: "е",
+    6: "ж",
+    7: "з",
+    8: "и",
+    9: "к",
+}
 
 
 def print_fields(player_field: Field, comp_field: Field):
@@ -62,10 +85,12 @@ def check_tank_coordinate(
     is_correctly = True
     for coord in coordinates:
         rows, column = coord.rows, coord.column
+        length = rows[1] - rows[0] + 1
         if (
             searched_coord.rows == rows
             and searched_coord.column == column
             and coordinates.count(coord) == 1
+            and length <= 5
         ):
             continue
         if (
@@ -102,7 +127,7 @@ def check_tanks_coordinates(coordinates: list) -> bool:
     return True
 
 
-def check_hit(shot: Shot, field: Field, kind: str = "tank") -> tuple:
+def check_hit(shot: Shot, field: Field, kind: str) -> tuple:
     """
     Проверяет попадание выстрела в танк или повторное попадание.
     Функция возвращает True в двух случаях:
@@ -157,11 +182,10 @@ def tip(field: Field):
         y = random.randint(0, 9)
         player_shot = Shot(x, y)
 
-        if check_hit(player_shot, field)[0]:
-            while check_hit(player_shot, field)[0]:
-                x = random.randint(0, 9)
-                y = random.randint(0, 9)
-                player_shot = Shot(x, y)
+        while check_hit(player_shot, field, "tank")[0]:
+            x = random.randint(0, 9)
+            y = random.randint(0, 9)
+            player_shot = Shot(x, y)
 
         # Трансформация индексов в координату.
         x += 1
@@ -203,7 +227,7 @@ def create_tanks(tanks_list: list):
     Args:
         tanks_list: Список координат всех танков на поле.
     """
-    for _ in range(1):
+    for _ in range(10):
         x = [random.randint(0, 9) for _ in range(2)]
         coord1 = min(x)  # Первая координата.
         coord2 = max(x)  # Вторая координата.
@@ -238,11 +262,63 @@ def check_destroyed_tank(field: Field, shot: Shot) -> tuple:
         Кортеж, содержащий логический тип и объект танка.
         True - если танк был уничтожен. False - если нет.
     """
-    if check_hit(shot, field)[0]:
-        tank = check_hit(shot, field)[1]
+    if check_hit(shot, field, 'tank')[0]:
+        tank = check_hit(shot, field, 'tank')[1]
         for row in range(tank.rows[0], tank.rows[1] + 1):
             if field.data[row][shot.column] == "✘":
                 continue
             return False, None
 
         return True, tank
+
+
+def check_input(user_input: str | list, kind: str, field: Field = None) -> bool:
+    """
+    Проверяет корректность ввода игрока.
+    Некорректным вводом считается:
+    Если kind = 'shot':
+        1. Если игрок стреляет по своей же клетке.
+        2. Если такая клетка не входит в диапазон поля.
+        3. Если ввод не соответствует шаблону.
+    Если kind = 'tank':
+        1. Если расположение танков неправильное.
+        2. Если ввод не соответствует шаблону.
+
+    Args:
+        user_input: Ввод пользователя.
+        kind: Флаг, который указывает какую проверку нужно выполнить.
+            'shot' - проверка ввода выстрела игрока.
+            'tank' - проверка ввода танков игрока.
+        field: Поле компьютера.
+        Этот параметр нужен только если kind = 'shot'.
+
+    Returns:
+        True - если выстрел корректный, False - если нет.
+    """
+    if kind == 'shot':
+        if field is None:
+            raise ValueError("Вы не указали аргумент 'field'")
+
+        row = user_input[0]
+        column = user_input[1:]
+        if (row.isalpha()
+                and 2 <= len(user_input) <= 3
+                and column.isdigit()
+                and 1 <= int(column) <= 10
+                and row in coordinates_dict):
+            user_shot = Shot(int(column) - 1, coordinates_dict[row],)
+            if not check_hit(user_shot, field, 'shot')[0]:
+                return True
+            else:
+                print("Вы уже стреляли по этой клетке!")
+        else:
+            print("Неправильный ввод!")
+
+        return False
+    elif kind == 'tank':
+        try:
+            tanks = converted_coords(user_input)
+        except:  # noqa
+            print("Неправильный ввод!")
+            return False
+        return check_tanks_coordinates(tanks)

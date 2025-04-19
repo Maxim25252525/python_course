@@ -1,29 +1,5 @@
 from final_project.my_functions import *
-
-CELL_DESIGN = {"empty": "▢", "tank": "▣", "miss": "◼", "hit": "✘"}
-
-coordinates_dict = {
-    "а": 0,
-    "б": 1,
-    "в": 2,
-    "г": 3,
-    "д": 4,
-    "е": 5,
-    "ж": 6,
-    "з": 7,
-    "и": 8,
-    "к": 9,
-    0: "а",
-    1: "б",
-    2: "в",
-    3: "г",
-    4: "д",
-    5: "е",
-    6: "ж",
-    7: "з",
-    8: "и",
-    9: "к",
-}
+from time import sleep
 
 
 if __name__ == "__main__":
@@ -48,6 +24,7 @@ if __name__ == "__main__":
                 # Начало программы, создаем поля для игрока и компьютера.
                 # Создаём танки для компьютера.
                 print("Игра началась!")
+                sleep(0.5)
                 user_field = Field()
                 computer_field = Field()
                 tanks = []
@@ -56,49 +33,38 @@ if __name__ == "__main__":
                 print_fields(user_field, computer_field)
 
                 # Создаем танки для игрока.
+                sleep(0.5)
                 command = conv_cmd(
                     input("Введите координаты ваших танков через пробел: ")
                 )
                 check_exit(command)
                 tanks = command.split()
-                tanks = converted_coords(
-                    tanks
-                )  # конвертируем координаты танков
-                while not check_tanks_coordinates(tanks):
+                while not check_input(tanks, 'tank'):
+                    sleep(0.5)
                     command = conv_cmd(
-                        input("Введите координаты ваших танков через пробел: ")
+                        input("Попробуйте снова: ")
                     )
                     check_exit(command)
                     tanks = command.split()
-                    tanks = converted_coords(tanks)
+
+                tanks = converted_coords(tanks)
                 user_field.tanks = tanks
 
-                # Алгоритм самой игры.
-
                 # TODO:
-                #  Глобально, нужно доделать логику самой игры.
-                #  То есть добавить возможность производить выстрелы компьютеру
-                #  И делать ходы по очереди, пока не закончится игра.
                 #  Также нужно добавить всяческие проверки на корректность ввода координат,
                 #  причем как танков, так и выстрелов.
-                #
-                # TODO:
-                #  > Если понадобится делать проверку на наличие в клетки выстрела или танка
-                #    можно использовать функцию "check_available_shot".
-                #  > После каждого ввода пользователя нужно использовать "conv_cmd".
-                #  > Также нужно использовать "check_exit", чтобы в случае чего завершать игру.
-                #
-                # TODO:
-                #  Желательно вынести все функции в отдельный файл.
                 #  Также нужно разобраться, когда стоит очищать терминал.
-                #  Чтобы скрыть танки компьютера нужно добавить False в
-                #  computer_field (находиться где-то в начале блока main, после приветствия).
+                #  Сделать одинаковую размерность танков.
+                #  Научить компьютер запоминать свои выстрелы.
 
+                # Алгоритм самой игры.
                 turn = 'user'  # Показывает, кто сейчас ходит.
                 while computer_field.tanks and user_field.tanks:
+                    # Алгоритм для игрока
                     if turn == 'user':
                         print()
                         print("Ваш ход!")
+                        sleep(0.5)
                         command = conv_cmd(
                             input(
                                 "Введите координаты вашего выстрела или воспользуйтесь подсказкой: "
@@ -112,6 +78,14 @@ if __name__ == "__main__":
                             )
                             check_exit(command)
 
+                        while not check_input(command, 'shot', computer_field):
+                            sleep(0.5)
+                            command = conv_cmd(
+                                input(
+                                    "Попробуйте снова: "
+                                )
+                            )
+                            check_exit(command)
                         user_shot = Shot(
                             int(command[1:]) - 1, coordinates_dict[command[0]]
                         )
@@ -136,14 +110,19 @@ if __name__ == "__main__":
                                         tank_id = i
                                         break
                                 computer_field.tanks.pop(tank_id)
-                                print("Вражеский танк уничтожен!")
+                                sleep(0.5)
+                                input("Вражеский танк уничтожен! ")
                             else:
-                                print("Вы попали!")
+                                sleep(0.5)
+                                input("Вы попали! ")
                         else:
                             computer_field.shots.append(user_shot)
                             print_fields(user_field, computer_field)
-                            print("Вы промахнулись!")
+                            sleep(0.5)
+                            input("Вы промахнулись! ")
                             turn = 'computer'  # Передаем ход компьютеру.
+
+                    # Алгоритм для компьютера
                     else:
                         print()
                         print("Ход компьютера!")
@@ -155,8 +134,10 @@ if __name__ == "__main__":
                             x = random.randint(0, 9)
                             y = random.randint(0, 9)
                             computer_shot = Shot(x, y)
+                        sleep(0.5)
+                        print(f'Противник бьет по {coordinates_dict[y]}{x+1}:')
                         # Проверяем, попали в танк или нет.
-                        if check_hit(computer_shot, user_field)[0]:
+                        if check_hit(computer_shot, user_field, 'tank')[0]:
                             computer_shot.hit = True
                             user_field.shots.append(computer_shot)
                             print_fields(user_field, computer_field)
@@ -173,13 +154,16 @@ if __name__ == "__main__":
                                         tank_id = i
                                         break
                                 user_field.tanks.pop(tank_id)
-                                print("Ваш танк уничтожен!")
+                                sleep(0.5)
+                                input("Ваш танк уничтожен! ")
                             else:
-                                print("По вашему танку попали!")
+                                sleep(0.5)
+                                input("По вашему танку попали! ")
                         else:
                             user_field.shots.append(computer_shot)
                             print_fields(user_field, computer_field)
-                            print("Все танки остались целы!")
+                            sleep(0.5)
+                            input("Все танки остались целы! ")
                             turn = 'user'  # Передаем ход пользователю.
 
                 if not user_field.tanks:
@@ -187,7 +171,7 @@ if __name__ == "__main__":
                 elif not computer_field.tanks:
                     print('Поздравляем! Все танки противника уничтожены!')
                     print("Вы выиграли!")
-                    command = 'выход'
+                    check_exit('выход')
 
             case _:
                 print("Такой команды нет! Попробуйте еще раз!")

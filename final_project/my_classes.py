@@ -1,4 +1,4 @@
-from final_project.main import CELL_DESIGN
+CELL_DESIGN = {"empty": "▢", "tank": "▣", "miss": "◼", "hit": "✘"}
 
 
 class Tank:
@@ -22,6 +22,11 @@ class Shot:
         self.row = row  # Индекс строки, куда произведен выстрел.
         self.column = column  # Индекс столбца, куда произведен выстрел.
         self.hit: bool = False  # Признак попадания.
+
+    def __eq__(self, other):
+        if not isinstance(other, Shot):
+            return False
+        return self.row == other.row and self.column == other.column
 
 
 class Field:

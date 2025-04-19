@@ -111,7 +111,6 @@ class Card:
         pin = str(pin_code)
         if len(pin) != 4 or not pin.isdigit():
             raise ValueError("Ошибка установки пин-кода")
-        random.seed(1984)
 
         now = datetime.datetime.now()
         self.user = user

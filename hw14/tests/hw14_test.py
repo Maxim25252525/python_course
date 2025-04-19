@@ -27,11 +27,11 @@ class TestHw14Task1:
         assert get_card.__dict__ == {
             "user": "Волков Д.А.",
             "_payment_system": "МИР",
-            "_Card__number": 54110951971074007,
+            "_Card__number": 9885374068732325,
             "_validity_period": datetime.now()
             .replace(year=datetime.now().year + 3)
             .date(),
-            "_Card__code_cv": 321,
+            "_Card__code_cv": 606,
             "_Card__pin_code": 1234,
             "is_blocked": False,
             "_balance": 0,
@@ -41,7 +41,7 @@ class TestHw14Task1:
         assert get_card.get_payment_system() == "МИР"
 
     def test_get_number(self, get_card):
-        assert get_card.get_number() == "***4007"
+        assert get_card.get_number() == "***2325"
 
     def test_get_validity_period(self, get_card):
         assert get_card.get_validity_period() == "04/28"

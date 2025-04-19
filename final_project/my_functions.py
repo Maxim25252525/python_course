@@ -3,7 +3,6 @@ import sys
 
 from final_project.my_classes import Shot, Tank, Field
 
-
 coordinates_dict = {
     "а": 0,
     "б": 1,
@@ -58,20 +57,32 @@ def converted_coords(coords: list) -> list:
     """
     result = []
     for coord in coords:
-        column = coordinates_dict[coord[0].lower()]  # Колонка.
+        column = coordinates_dict.get(coord[0].lower(), coord[0])  # Колонка.
+        if column not in coordinates_dict:
+            raise ValueError(f"Координата не может начинаться с буквы {column}.")
         if len(coord) >= 4:
+            if str(coord[1]).isalpha() and str(coord[2]).isalpha():
+                raise ValueError("Неверный формат координат.")
+            if coord[0] != coord[2]:
+                raise ValueError("Координаты танка должны быть указаны вертикально.")
             coord1 = int(coord[1]) - 1  # Первая координата.
             coord2 = int(coord[3:]) - 1  # Вторая координата.
+            if coord1 not in range(0, 9) or coord2 not in range(0, 9):
+                raise ValueError("Координаты танка должны быть в пределах от 1 до 10.")
             result.append(Tank((coord1, coord2), column))
         else:
-            cord1 = int(coord[1:]) - 1  # Координата.
-            result.append(Tank((cord1, cord1), column))
+            if str(coord[1]).isalpha():
+                raise ValueError("Неверный формат координат.")
+            coord1 = int(coord[1:]) - 1  # Координата.
+            if coord1 not in range(0, 9):
+                raise ValueError("Координаты танка должны быть в пределах от 1 до 10.")
+            result.append(Tank((coord1, coord1), column))
 
     return result
 
 
 def check_tank_coordinate(
-    searched_coord: Tank, coordinates: list[Tank]
+        searched_coord: Tank, coordinates: list[Tank]
 ) -> bool:
     """Проверяет корректность координаты танка на поле.
 
@@ -87,20 +98,20 @@ def check_tank_coordinate(
         rows, column = coord.rows, coord.column
         length = rows[1] - rows[0] + 1
         if (
-            searched_coord.rows == rows
-            and searched_coord.column == column
-            and coordinates.count(coord) == 1
-            and length <= 5
+                searched_coord.rows == rows
+                and searched_coord.column == column
+                and coordinates.count(coord) == 1
+                and length <= 5
         ):
             continue
         if (
-            searched_coord.rows[0] - 1 <= rows[1]
-            and searched_coord.rows[1] + 1 >= rows[0]
+                searched_coord.rows[0] - 1 <= rows[1]
+                and searched_coord.rows[1] + 1 >= rows[0]
         ):
             if (
-                searched_coord.column - 1
-                <= column
-                <= searched_coord.column + 1
+                    searched_coord.column - 1
+                    <= column
+                    <= searched_coord.column + 1
             ):
                 is_correctly = False
                 break
@@ -148,8 +159,8 @@ def check_hit(shot: Shot, field: Field, kind: str) -> tuple:
         arr = field.tanks
         for coord in arr:
             if (
-                coord.rows[0] <= shot.row <= coord.rows[1]
-                and coord.column == shot.column
+                    coord.rows[0] <= shot.row <= coord.rows[1]
+                    and coord.column == shot.column
             ):
                 return True, coord
     elif kind == "shot":
@@ -236,9 +247,9 @@ def create_tanks(tanks_list: list):
             (coord1, coord2), column
         )  # Создание координаты танка.
         while (
-            not check_tank_coordinate(tank_coord, tanks_list)
-            or coord2 - coord1 + 1 > 5
-            or tank_coord in tanks_list
+                not check_tank_coordinate(tank_coord, tanks_list)
+                or coord2 - coord1 + 1 > 5
+                or tank_coord in tanks_list
         ):
             x = [random.randint(0, 9) for _ in range(2)]
             coord1 = min(x)  # Первая координата.
@@ -298,6 +309,9 @@ def check_input(user_input: str | list, kind: str, field: Field = None) -> bool:
     if kind == 'shot':
         if field is None:
             raise ValueError("Вы не указали аргумент 'field'")
+        if len(user_input) < 2:
+            print("Неправильный ввод!")
+            return False
 
         row = user_input[0]
         column = user_input[1:]
@@ -306,7 +320,7 @@ def check_input(user_input: str | list, kind: str, field: Field = None) -> bool:
                 and column.isdigit()
                 and 1 <= int(column) <= 10
                 and row in coordinates_dict):
-            user_shot = Shot(int(column) - 1, coordinates_dict[row],)
+            user_shot = Shot(int(column) - 1, coordinates_dict[row], )
             if not check_hit(user_shot, field, 'shot')[0]:
                 return True
             else:
@@ -318,7 +332,10 @@ def check_input(user_input: str | list, kind: str, field: Field = None) -> bool:
     elif kind == 'tank':
         try:
             tanks = converted_coords(user_input)
-        except:  # noqa
-            print("Неправильный ввод!")
+        except ValueError as ex:  # noqa
+            if str(ex).startswith("invalid literal for int()"):
+                print("Неправильный формат координаты!")
+            else:
+                print(ex)
             return False
         return check_tanks_coordinates(tanks)

@@ -93,7 +93,7 @@ def check_tanks_coordinates(coordinates: list) -> bool:
         True - если координаты танков корректны, False - если нет.
     """
     for coord in coordinates:
-        if check_tank_coordinate(coord, tanks):
+        if check_tank_coordinate(coord, coordinates):
             return True
         else:
             print("Некорректные координаты танков!")
@@ -111,7 +111,7 @@ def check_hit(shot: Shot, field: Field, kind: str = "tank") -> tuple:
     Выбор случая определяется параметром kind.
 
     Args:
-        shot: Выстрел игрока.
+        shot: Выстрел игрока или компьютера.
         field: Поле с танками или выстрелами.
         kind: Тип списка, в котором ищется выстрел('tank' или 'shot').
 
@@ -203,7 +203,7 @@ def create_tanks(tanks_list: list):
     Args:
         tanks_list: Список координат всех танков на поле.
     """
-    for _ in range(10):
+    for _ in range(1):
         x = [random.randint(0, 9) for _ in range(2)]
         coord1 = min(x)  # Первая координата.
         coord2 = max(x)  # Вторая координата.

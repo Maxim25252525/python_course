@@ -1,3 +1,4 @@
+from final_project.my_classes import User, Computer
 from final_project.my_functions import *
 from time import sleep
 
@@ -48,8 +49,8 @@ if __name__ == "__main__":
                 # Создаём танки для компьютера.
                 print("Игра началась!")
                 sleep(0.5)
-                user_field = Field()
-                computer_field = Field()
+                user_field = User()
+                computer_field = Computer(True)
                 tanks = []
                 create_tanks(tanks, computer_field.placement)
                 computer_field.tanks = tanks
@@ -168,6 +169,7 @@ if __name__ == "__main__":
                         if check_hit(computer_shot, user_field, 'tank')[0]:
                             computer_shot.hit = True
                             user_field.shots.append(computer_shot)
+                            # remember_shot()
                             print_fields(user_field, computer_field)
 
                             # Проверяем, уничтожен ли танк.

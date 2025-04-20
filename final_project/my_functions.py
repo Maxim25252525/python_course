@@ -2,7 +2,7 @@ import random
 import sys
 import re
 
-from final_project.my_classes import Shot, Tank, Field
+from final_project.my_classes import Shot, Tank, User, Computer
 
 coordinates_dict = {
     "а": 0,
@@ -28,7 +28,7 @@ coordinates_dict = {
 }
 
 
-def print_fields(player_field: Field, comp_field: Field):
+def print_fields(player_field: User, comp_field: Computer):
     # Создание заголовка с буквами, где THSP - символ тонкого пробела.
     letters = "  ".join(list("АБВГДЕЖЗИК"))
     # letters = letters.replace("Д", " Д")
@@ -141,7 +141,8 @@ def check_tank_coordinate(
     return True, Tank
 
 
-def check_tanks_coordinates(coordinates: list, field: Field) -> bool:
+def check_tanks_coordinates(coordinates: list,
+                            field: User | Computer) -> bool:
     """Проверяет корректность координат танков на поле.
 
     Args:
@@ -165,7 +166,7 @@ def check_tanks_coordinates(coordinates: list, field: Field) -> bool:
     return True
 
 
-def check_hit(shot: Shot, field: Field, kind: str) -> tuple:
+def check_hit(shot: Shot, field: User | Computer, kind: str) -> tuple:
     """
     Проверяет попадание выстрела в танк или повторное попадание.
     Функция возвращает True в двух случаях:
@@ -204,7 +205,7 @@ def check_hit(shot: Shot, field: Field, kind: str) -> tuple:
     return False, None
 
 
-def tip(field: Field):
+def tip(field: Computer):
     """
     Дает подсказку игроку, если он правильно решил пример.
 
@@ -291,7 +292,7 @@ def create_tanks(tanks_list: list, placement: dict):
         tanks_list.append(tank_coord)
 
 
-def check_destroyed_tank(field: Field, shot: Shot) -> tuple:
+def check_destroyed_tank(field: User | Computer, shot: Shot) -> tuple:
     """
     Проверяет, не уничтожен ли танк при выстреле игрока.
 
@@ -313,7 +314,7 @@ def check_destroyed_tank(field: Field, shot: Shot) -> tuple:
         return True, tank
 
 
-def check_input(user_input: str | list, kind: str, field: Field) -> bool:
+def check_input(user_input: str | list, kind: str, field: User | Computer) -> bool:
     """
     Проверяет корректность ввода игрока.
     Некорректным вводом считается:

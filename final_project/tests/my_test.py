@@ -1,15 +1,12 @@
 import pytest
 
-from final_project.my_classes import Field, Tank, Shot
+from final_project.my_classes import Tank, Shot, User
 from final_project.my_functions import check_tank_coordinate, check_hit
 
 
 @pytest.fixture
-def make_tanks(player=True):
-    if player:
-        field = Field()
-    else:
-        field = Field(False)
+def make_tanks():
+    field = User()
     tanks = [
         Tank((0, 0), 0),
         Tank((2, 3), 2),

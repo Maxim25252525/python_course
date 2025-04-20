@@ -294,7 +294,7 @@ def create_tanks(tanks_list: list, placement: dict):
 
 def check_destroyed_tank(field: User | Computer, shot: Shot) -> tuple:
     """
-    Проверяет, не уничтожен ли танк при выстреле игрока.
+    Проверяет, не уничтожен ли танк при выстреле.
 
     Args:
         field: Поле игрока или компьютера.
@@ -312,6 +312,8 @@ def check_destroyed_tank(field: User | Computer, shot: Shot) -> tuple:
             return False, None
 
         return True, tank
+    else:
+        return False, None
 
 
 def check_input(user_input: str | list, kind: str, field: User | Computer) -> bool:

@@ -166,12 +166,11 @@ if __name__ == "__main__":
                         print(f'Противник бьет по {coordinates_dict[y]}{x+1}:')
 
                         # Проверяем, попали в танк или нет.
-                        if check_hit(computer_shot, user_field, 'tank')[0]:
+                        while (
+                                check_hit(computer_shot, user_field, 'tank')[0]
+                        ):
                             computer_shot.hit = True
-                            user_field.shots.append(computer_shot)
-                            # remember_shot()
                             print_fields(user_field, computer_field)
-
                             # Проверяем, уничтожен ли танк.
                             if check_destroyed_tank(user_field, computer_shot)[0]:
                                 tank_id = 0
@@ -184,14 +183,26 @@ if __name__ == "__main__":
                                     ):
                                         tank_id = i
                                         break
+
+                                user_field.remember_shot(computer_shot, True)
                                 user_field.tanks.pop(tank_id)
                                 sleep(0.5)
                                 input("Ваш танк уничтожен! ")
                             else:
                                 sleep(0.5)
                                 input("По вашему танку попали! ")
+                                print()
+                                print("Ход компьютера!")
+                                computer_shot = user_field.remember_shot(computer_shot, False)
+                                sleep(0.5)
+                                print(f'Противник бьет по {coordinates_dict[y]}{x + 1}:')
+                                print_fields(user_field, computer_field)
                         else:
                             user_field.shots.append(computer_shot)
+                            if user_field.direction == 'up':
+                                user_field.direction = 'isdown'
+                            elif user_field.direction == 'down':
+                                user_field.direction = 'isup'
                             print_fields(user_field, computer_field)
                             sleep(0.5)
                             input("Все танки остались целы! ")

@@ -1,3 +1,5 @@
+import random
+
 CELL_DESIGN = {"empty": "▢", "tank": "▣", "miss": "◼", "hit": "✘"}
 
 
@@ -74,7 +76,17 @@ class User(Field):
         placement: Словарь для расстановки танков на поле.
         remembered_shots: Список выстрелов, которые не будут отображаться,
         но будут запомнены.
+        saved_shot: Отложенный выстрел.
+        direction: Показывает, как изменить следующий выстрел
+        (сделать больше или меньше).
+
         """
+
+    def __init__(self):
+        super().__init__()
+        self.saved_shot: Shot | None = None
+        self.direction: str | None = None
+
     def fill_field(self):
         """Заполняет поле условными символами."""
         # Расстановка танков на поле.
@@ -95,40 +107,57 @@ class User(Field):
             shot: Выстрел.
             destroyed: Признак уничтожения танка.
         """
+        # TODO: Если сохраняется одно число, то оно не сохраняется до
+        #  следующего вызова, но сохраняется в main как-то, иначе
+        #  первое число сохраняется где-то в main, а второе сохраняется
+        #  до следующего вызова.
         if not destroyed:
             row = shot.row
             column = shot.column
-            if column == 0:
-                if row == 0:
-                    pass
-                elif row == 9:
-                    pass
-                else:
-                    pass
-                shot = Shot(row + 1, column)
-                self.remembered_shots.append(shot)
-            elif column == 9:
-                if row == 0:
-                    pass
-                elif row == 9:
-                    pass
-                else:
-                    pass
-                shot = Shot(row - 1, column)
-                self.remembered_shots.append(shot)
-            else:
-                if row == 0:
-                    pass
-                elif row == 9:
-                    pass
-                else:
-                    pass
-                shots = [Shot(row + 1, column), Shot(row - 1, column)]
-                self.remembered_shots += shots
-        else:
-            pass
 
-        self.shots.append(shot)
+            # Заполняем клетки, в которых точно нет танка.
+            if column == 0:
+                self.remembered_shots.append(Shot(row, column + 1))
+            elif column == 9:
+                self.remembered_shots.append(Shot(row, column - 1))
+            else:
+                self.remembered_shots.append(Shot(row, column - 1))
+                self.remembered_shots.append(Shot(row, column + 1))
+
+            self.shots.append(shot)  # Добавляем выстрел компьютера в список.
+
+            # Возвращаем клетку, в который может быть танк.
+            if row == 0:
+                next_shot = Shot(1, column)
+                self.direction = 'up'
+            elif row == 9:
+                next_shot = Shot(8, column)
+                self.direction = 'down'
+            else:
+                if self.direction == 'up':
+                    next_shot = Shot(row + 1, column)
+                elif self.direction == 'down':
+                    next_shot = Shot(row - 1, column)
+                else:
+                    if self.saved_shot is None:
+                        option1 = Shot(row + 1, column)
+                        option2 = Shot(row - 1, column)
+                        chosen = random.choice([option1, option2])
+                        self.saved_shot = option2 if chosen == option1 else option1
+                        self.direction = 'up' if chosen == option1 else 'down'
+                        next_shot = chosen
+                    else:
+                        next_shot = self.saved_shot
+                        self.saved_shot = (
+                            Shot(row + 1, column) if self.direction == 'isup'
+                            else Shot(row - 1, column) if self.direction == 'isdown'
+                            else None
+                        )
+
+            return next_shot
+        else:
+            self.direction = None
+            self.saved_shot = None
 
 
 class Computer(Field):

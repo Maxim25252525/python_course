@@ -44,6 +44,7 @@ class Field:
         tanks: Список танков.
         shots: Список выстрелов, производимых по инициализированному полю.
         player: Показывает, пользовательское ли поле.
+        placement: Словарь для расстановки танков на поле.
     """
 
     def __init__(self, player: bool = True):
@@ -55,6 +56,7 @@ class Field:
         self.tanks: list[Tank] = []
         self.shots: list[Shot] = []
         self.player = player
+        self.placement = {5: 1, 4: 1, 3: 2, 2: 3, 1: 3}
 
     def fill_field(self):
         """Заполняет поле условными символами."""

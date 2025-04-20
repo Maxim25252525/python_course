@@ -28,7 +28,7 @@ if __name__ == "__main__":
                 user_field = Field()
                 computer_field = Field()
                 tanks = []
-                create_tanks(tanks)
+                create_tanks(tanks, computer_field.placement)
                 computer_field.tanks = tanks
                 print_fields(user_field, computer_field)
 

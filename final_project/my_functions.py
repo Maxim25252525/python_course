@@ -247,11 +247,12 @@ def conv_cmd(cmd: str) -> str:
     return cmd.strip().lower()
 
 
-def create_tanks(tanks_list: list):
+def create_tanks(tanks_list: list, placement: dict):
     """Создает случайные координаты танков на поле.
 
     Args:
         tanks_list: Список координат всех танков на поле.
+        placement: Словарь с правильными длинами танков.
     """
     for _ in range(10):
         x = [random.randint(0, 9) for _ in range(2)]
@@ -265,6 +266,7 @@ def create_tanks(tanks_list: list):
                 not check_tank_coordinate(tank_coord, tanks_list)[0]
                 or coord2 - coord1 + 1 > 5
                 or tank_coord in tanks_list
+                or placement[tank_coord.length] == 0
         ):
             x = [random.randint(0, 9) for _ in range(2)]
             coord1 = min(x)  # Первая координата.
@@ -273,6 +275,7 @@ def create_tanks(tanks_list: list):
             tank_coord = Tank(
                 (coord1, coord2), column
             )  # Создание координаты танка.
+        placement[tank_coord.length] -= 1
         tanks_list.append(tank_coord)
 
 

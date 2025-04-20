@@ -5,7 +5,7 @@ from time import sleep
 if __name__ == "__main__":
     print(
         "Привет! Это игра танковый бой!",
-        "Если вы хотите ознакомиться с правилами игры, напишите 'помощь'.",
+        "Если вы хотите ознакомиться с правилами игры, напишите 'правила'.",
         "Чтобы начать игру, вам нужно написать 'старт'.",
         sep="\n",
     )
@@ -15,8 +15,31 @@ if __name__ == "__main__":
     check_exit(command)
     while True:
         match command:
-            case "помощь":
-                print("Правила игры: ")
+            case "правила":
+                print("Правила игры:\n"
+                      "Сначала вы должны разместить свои танки на поле. "
+                      "Танки должны быть расположены по вертикали "
+                      "в пределах от а1 до к10.\n"
+                      "Ввод танков должен осуществляться через пробел.\n"
+                      "Всего у вас должно быть 10 неповторяющихся танков.\n"
+                      "- Танк из 5 клеток - 1\n"
+                      "- Танк из 4 клеток - 1\n"
+                      "- Танков из 3 клеток - 2\n"
+                      "- Танков из 2 клеток - 3\n"
+                      "- Танков из 1 клетки - 3\n"
+                      "Затем начнется сама игра.\n"
+                      "Ваша задача - уничтожить все танки компьютера. "
+                      "Для того, чтобы сделать выстрел, "
+                      "введите координаты клетки.\n"
+                      "После этого по вам будет стрелять компьютер.\n"
+                      "Вы будете ходить по очереди,"
+                      " пока один из игроков не победит.\n"
+                      "Также вы можете попросить подсказку. "
+                      "Для этого напишите 'подсказка', вместо выстрела.\n"
+                      "Не стоит забывать, что в любой момент "
+                      "вы можете выйти из игры, написав 'выход'.\n"
+                      "Напишите старт, чтобы начать.\n"
+                      "Приятной игры!")
                 command = conv_cmd(input("> "))
                 check_exit(command)
 
@@ -33,13 +56,14 @@ if __name__ == "__main__":
                 print_fields(user_field, computer_field)
 
                 # Создаем танки для игрока.
+                # Танчики: а8а10 б3 б6 в1 в9в10 г5г7 д2д3 ж4ж7 з1з2 к3к7
                 sleep(0.5)
                 command = conv_cmd(
                     input("Введите координаты ваших танков через пробел: ")
                 )
                 check_exit(command)
                 tanks = command.split()
-                while not check_input(tanks, 'tank'):
+                while not check_input(tanks, 'tank', user_field):
                     sleep(0.5)
                     command = conv_cmd(
                         input("Попробуйте снова: ")
@@ -69,21 +93,26 @@ if __name__ == "__main__":
                             )
                         )
                         check_exit(command)
-                        if command == "подсказка":
-                            tip(computer_field)
-                            command = conv_cmd(
-                                input("Введите координаты вашего выстрела: ")
-                            )
-                            check_exit(command)
 
+                        is_used = False
                         while not check_input(command, 'shot', computer_field):
                             sleep(0.5)
-                            command = conv_cmd(
-                                input(
-                                    "Попробуйте снова: "
-                                )
-                            )
-                            check_exit(command)
+                            if command == "подсказка":
+                                if not is_used:
+                                    tip(computer_field)
+                                    command = conv_cmd(
+                                        input("Введите координаты вашего выстрела: ")
+                                    )
+                                    check_exit(command)
+                                    is_used = True
+                                else:
+                                    print("Вы уже использовали подсказку!")
+                                    command = input("Введите координаты вашего выстрела: ")
+                                    check_exit(command)
+                            else:
+                                command = conv_cmd(input("Попробуйте снова: "))
+                                check_exit(command)
+
                         user_shot = Shot(
                             int(command[1:]) - 1, coordinates_dict[command[0]]
                         )
@@ -134,11 +163,13 @@ if __name__ == "__main__":
                             computer_shot = Shot(x, y)
                         sleep(0.5)
                         print(f'Противник бьет по {coordinates_dict[y]}{x+1}:')
+
                         # Проверяем, попали в танк или нет.
                         if check_hit(computer_shot, user_field, 'tank')[0]:
                             computer_shot.hit = True
                             user_field.shots.append(computer_shot)
                             print_fields(user_field, computer_field)
+
                             # Проверяем, уничтожен ли танк.
                             if check_destroyed_tank(user_field, computer_shot)[0]:
                                 tank_id = 0

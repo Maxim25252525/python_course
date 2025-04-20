@@ -1,5 +1,6 @@
 import random
 import sys
+import re
 
 from final_project.my_classes import Shot, Tank, Field
 
@@ -46,44 +47,49 @@ def print_fields(player_field: Field, comp_field: Field):
     print(result)
 
 
-def converted_coords(coords: list) -> list:
+def converted_coords(coords: list[str]) -> list:
     """
     Переводит координаты в индексы.
     Args:
-        coords: Список координат танка.
+        coords: Необработанный список координат танка.
 
     Returns:
         Список в формате ((кор1, кор2), колонка).
     """
     result = []
+    english = 'abcdefghijklmnopqrstuvwxyz' # noqa
+    pattern = r'^([a-я])(\d+)(?:([a-я])(\d+))?$'
     for coord in coords:
-        column = coordinates_dict.get(coord[0].lower(), coord[0])  # Колонка.
-        if column not in coordinates_dict:
-            raise ValueError(f"Координата не может начинаться с буквы {column}.")
-        if len(coord) >= 4:
-            if str(coord).isalpha():
-                raise ValueError("Неверный формат координат.")
-            if coord[0] != coord[2]:
-                raise ValueError("Координаты танка должны быть указаны вертикально.")
-            coord1 = int(coord[1]) - 1  # Первая координата.
-            coord2 = int(coord[3:]) - 1  # Вторая координата.
-            if coord1 not in range(0, 9) or coord2 not in range(0, 9):
-                raise ValueError("Координаты танка должны быть в пределах от 1 до 10.")
-            result.append(Tank((coord1, coord2), column))
-        else:
-            if str(coord).isalpha():
-                raise ValueError("Неверный формат координат.")
-            coord1 = int(coord[1:]) - 1  # Координата.
-            if coord1 not in range(0, 9):
-                raise ValueError("Координаты танка должны быть в пределах от 1 до 10.")
-            result.append(Tank((coord1, coord1), column))
+        if re.fullmatch(pattern, coord) is None:
+            raise ValueError("Неверный формат координат.")
+
+        match = re.fullmatch(pattern, coord)
+        row1 = int(match.group(2)) - 1  # Первая координата.
+        row2 = int(match.group(4)) - 1 if match.group(4) else row1  # Вторая координата.
+        if row1 > row2:
+            row1, row2 = row2, row1
+        col1 = match.group(1)
+        col2 = match.group(3) if match.group(3) else col1
+
+        if col1 in english or col2 in english:
+            raise ValueError("Координаты танка должны быть на русском языке.")
+        elif (col1 not in coordinates_dict.values() or
+                col2 not in coordinates_dict.values()):
+            raise ValueError("Координаты танка должны быть в пределах от 'a' до 'к'.")
+        elif col1 != col2:
+            raise ValueError("Координаты танка должны быть в одной колонке.")
+        elif row1 not in range(10) or row2 not in range(10):
+            raise ValueError("Координаты танка должны быть от 1 до 10.")
+
+        col = coordinates_dict[col1]  # Колонка.
+        result.append(Tank((row1, row2), col))
 
     return result
 
 
 def check_tank_coordinate(
         searched_coord: Tank, coordinates: list[Tank]
-) -> (bool, tuple[str, str] | None):
+) -> (bool, str | Tank):
     """Проверяет корректность координаты танка на поле.
 
     Args:
@@ -92,63 +98,69 @@ def check_tank_coordinate(
 
     Returns:
         Кортеж, содержащий логический тип и объект танка.
-        Если координаты танка корректны, то объект танка - None.
+        Если координаты танка некорректны,
+        то вместо объекта танка возвращается строка с ошибкой.
         True - если координаты танка корректны, False - если нет.
     """
-    is_correctly = True
     for coord in coordinates:
         rows, column = coord.rows, coord.column
-        length = rows[1] - rows[0] + 1
-        if (
-                searched_coord.rows == rows
-                and searched_coord.column == column
-                and coordinates.count(coord) == 1
-                and length <= 5
-        ):
+        length = coord.length
+        if length > 5:
+            error = "Танк не может быть длиннее 5 клеток."
+            return False, error
+
+        # Координаты первого танка.
+        r1 = searched_coord.rows[0] + 1
+        r2 = searched_coord.rows[1] + 1
+        c = coordinates_dict[searched_coord.column]
+        t1 = (f'{c}{r1}{c}{r2}' if r1 != r2
+              else f'{c}{r1}')
+        # Координаты второго танка.
+        r1 = rows[0] + 1
+        r2 = rows[1] + 1
+        c = coordinates_dict[column]
+        t2 = (f'{c}{r1}{c}{r2}' if r1 != r2
+              else f'{c}{r1}')
+
+        if (searched_coord == coord
+                and coordinates.count(coord) > 1):
+            error = f"Танк {t1} уже есть на поле."
+            return False, error
+        elif (searched_coord == coord
+              and coordinates.count(coord) <= 1):
             continue
-        if (
-                searched_coord.rows[0] - 1 <= rows[1]
+
+        if (searched_coord.rows[0] - 1 <= rows[1]
                 and searched_coord.rows[1] + 1 >= rows[0]
-        ):
-            if (
-                    searched_coord.column - 1
-                    <= column
-                    <= searched_coord.column + 1
-            ):
-                is_correctly = False
+                and searched_coord.column - 1
+                <= column
+                <= searched_coord.column + 1):
+            error = f"Танки {t1} и {t2} соприкасаются."
+            return False, error
 
-                # Координаты первого танка.
-                r1 = searched_coord.rows[0] + 1
-                r2 = searched_coord.rows[1] + 1
-                c = coordinates_dict[searched_coord.column]
-                t1 = (f'{c}{r1}{c}{r2}' if r1 != r2
-                      else f'{c}{r1}')
-                # Координаты второго танка.
-                r1 = rows[0] + 1
-                r2 = rows[1] + 1
-                c = coordinates_dict[column]
-                t2 = (f'{c}{r1}{c}{r2}' if r1 != r2
-                      else f'{c}{r1}')
-
-                return is_correctly, t1, t2
-
-    return is_correctly, None
+    return True, Tank
 
 
-def check_tanks_coordinates(coordinates: list) -> bool:
+def check_tanks_coordinates(coordinates: list, field: Field) -> bool:
     """Проверяет корректность координат танков на поле.
 
     Args:
         coordinates: Список координат всех танков на поле.
+        field: Поле с танками игрока или компьютера.
 
     Returns:
         True - если координаты танков корректны, False - если нет.
     """
     for coord in coordinates:
         check = check_tank_coordinate(coord, coordinates)
+        length = coord.length
         if not check[0]:
-            print(f"Танки {check[1]} и {check[2]} соприкасаются.")
+            print(check[1])
             return False
+        elif field.placement[length] == 0:
+            print(f'Превышено количество танков длиной {length}.')
+            return False
+        field.placement[length] -= 1
 
     return True
 
@@ -301,7 +313,7 @@ def check_destroyed_tank(field: Field, shot: Shot) -> tuple:
         return True, tank
 
 
-def check_input(user_input: str | list, kind: str, field: Field = None) -> bool:
+def check_input(user_input: str | list, kind: str, field: Field) -> bool:
     """
     Проверяет корректность ввода игрока.
     Некорректным вводом считается:
@@ -318,13 +330,16 @@ def check_input(user_input: str | list, kind: str, field: Field = None) -> bool:
         kind: Флаг, который указывает какую проверку нужно выполнить.
             'shot' - проверка ввода выстрела игрока.
             'tank' - проверка ввода танков игрока.
-        field: Поле компьютера.
-        Этот параметр нужен только если kind = 'shot'.
+        field: Поле компьютера или игрока.
+        Если kind = 'shot', то field = поле компьютера.
+        Если kind = 'tank', то field = поле игрока.
 
     Returns:
         True - если выстрел корректный, False - если нет.
     """
     if kind == 'shot':
+        if user_input == 'подсказка':
+            return False
         if field is None:
             raise ValueError("Вы не указали аргумент 'field'")
         if len(user_input) < 2:
@@ -351,9 +366,6 @@ def check_input(user_input: str | list, kind: str, field: Field = None) -> bool:
         try:
             tanks = converted_coords(user_input)
         except ValueError as ex:  # noqa
-            if str(ex).startswith("invalid literal for int()"):
-                print("Неправильный формат координаты!")
-            else:
-                print(ex)
+            print(ex)
             return False
-        return check_tanks_coordinates(tanks)
+        return check_tanks_coordinates(tanks, field)

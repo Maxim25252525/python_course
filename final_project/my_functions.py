@@ -59,6 +59,10 @@ def converted_coords(coords: list[str]) -> list:
     result = []
     english = 'abcdefghijklmnopqrstuvwxyz' # noqa
     pattern = r'^([a-я])(\d+)(?:([a-я])(\d+))?$'
+
+    if len(coords) != 10:
+        raise ValueError(f"Неверное количество координат танка - {len(coords)}")
+
     for coord in coords:
         if re.fullmatch(pattern, coord) is None:
             raise ValueError("Неверный формат координат.")

@@ -166,6 +166,12 @@ class User(Field):
                             next_shot.row -= 1
                             self.direction = 'down'
 
+            if (
+                next_shot in self.remembered_shots
+                or next_shot in self.shots
+            ):
+                next_shot = self.saved_shot
+
         else:
             self.direction = None
             self.saved_shot = None
@@ -188,9 +194,8 @@ class User(Field):
             d3 = Shot(row2 + 1, column - 1)
             d4 = Shot(row2 + 1, column + 1)
             diagonals = [
-                lambda x: x in [d1, d2, d3, d4]
+                x for x in [d1, d2, d3, d4]
                 if 0 <= x.row <= 9 and 0 <= x.column <= 9
-                else None
             ]
             self.remembered_shots.update(diagonals)
 

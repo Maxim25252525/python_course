@@ -11,8 +11,8 @@ if __name__ == "__main__":
         sep="\n",
     )
 
-    # command = conv_cmd(input("> "))
-    command = 'старт'
+    command = conv_cmd(input("> "))
+    # command = 'старт'
     check_exit(command)
     while True:
         match command:
@@ -57,13 +57,12 @@ if __name__ == "__main__":
                 print_fields(user_field, computer_field)
 
                 # Создаем танки для игрока.
-                # Танчики: а8а10 б3 б6 в1 в9в10 г5г7 д2д3 ж4ж7 з1з2 к6к10
                 sleep(0.5)
-                # command = conv_cmd(
-                #     input("Введите координаты ваших танков через пробел: ")
-                # )
-                # check_exit(command)
-                command = 'а8а10 б3 б6 в1 в9в10 г5г7 д2д3 ж4ж7 з1з2 к6к10'
+                command = conv_cmd(
+                    input("Введите координаты ваших танков через пробел: ")
+                )
+                check_exit(command)
+                # command = 'а8а10 б3 б6 в1 в9в10 г5г7 д2д3 ж4ж7 з1з2 к6к10'
                 tanks = command.split()
                 while not check_input(tanks, 'tank', user_field):
                     sleep(0.5)
@@ -75,11 +74,6 @@ if __name__ == "__main__":
 
                 tanks = converted_coords(tanks)
                 user_field.tanks = tanks
-
-                # TODO:
-                #  Также нужно разобраться, когда стоит очищать терминал.
-                #  Сделать одинаковую размерность танков.
-                #  Научить компьютер запоминать свои выстрелы.
 
                 # Алгоритм самой игры.
                 turn = 'user'  # Показывает, кто сейчас ходит.
@@ -138,7 +132,8 @@ if __name__ == "__main__":
                                         tank_id = i
                                         break
 
-                                d_tank = user_field.tanks[tank_id]  # Уничтоженный танк.
+                                d_tank = computer_field.tanks[tank_id]  # Уничтоженный танк.
+                                computer_field.tanks.pop(tank_id)  # Удаляем танк.
                                 r1 = d_tank.rows[0] + 1
                                 r2 = d_tank.rows[1] + 1
                                 col = coordinates_dict[d_tank.column]
@@ -161,10 +156,8 @@ if __name__ == "__main__":
                     else:
                         print()
                         print("Ход компьютера!")
-                        # x = random.randint(0, 9)
-                        # y = random.randint(0, 9)
-                        x = 8
-                        y = 9
+                        x = random.randint(0, 9)
+                        y = random.randint(0, 9)
                         computer_shot = Shot(x, y)
                         # Проверяем, был ли выстрел ранее по этой клетке.
                         while (
@@ -175,6 +168,7 @@ if __name__ == "__main__":
                             y = random.randint(0, 9)
                             computer_shot = Shot(x, y)
                         sleep(0.5)
+
                         if user_field.saved_shot is None:
                             print(f'Противник бьет по {coordinates_dict[y]}{x + 1}:')
                             if check_hit(computer_shot, user_field, 'tank')[0]:
@@ -197,7 +191,7 @@ if __name__ == "__main__":
                             # Танк уничтожен.
                             if check_destroyed_tank(user_field, computer_shot)[0]:
                                 tank_id = 0
-                                for i, tank in enumerate(computer_field.tanks):
+                                for i, tank in enumerate(user_field.tanks):
                                     if (
                                         tank
                                         == check_destroyed_tank(
@@ -268,13 +262,22 @@ if __name__ == "__main__":
                             input("Все танки остались целы! ")
                             turn = 'user'  # Передаем ход пользователю.
 
+                # Конец игры.
+                sleep(0.5)
                 if not user_field.tanks:
-                    print('К сожалению, все ваши танки уничтожены!')
+                    print('\nК сожалению, все ваши танки уничтожены!')
                     print("Вы проиграли!")
                 elif not computer_field.tanks:
-                    print('Поздравляем! Все танки противника уничтожены!')
+                    print('\nПоздравляем! Все танки противника уничтожены!')
                     print("Вы выиграли!")
-                    check_exit('выход')
+
+                sleep(0.5)
+                command = conv_cmd(input("Хотите сыграть еще раз? [да/нет]\n> "))
+                if command == 'да':
+                    command = 'старт'
+                else:
+                    command = 'выход'
+                check_exit('выход')
 
             case _:
                 print("Такой команды нет! Попробуйте еще раз!")

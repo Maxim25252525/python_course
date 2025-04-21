@@ -83,7 +83,7 @@ class User(Field):
         direction: Показывает, как изменить следующий выстрел
         (сделать больше или меньше).
 
-        """
+    """
 
     def __init__(self):
         super().__init__()
@@ -103,8 +103,9 @@ class User(Field):
                 CELL_DESIGN["hit"] if shot.hit else CELL_DESIGN["miss"]
             )
 
-    def remember_shot(self, shot: Shot, destroyed: bool,
-                      tank: Tank | None = None) -> Shot:
+    def remember_shot(
+        self, shot: Shot, destroyed: bool, tank: Tank | None = None
+    ) -> Shot:
         """
         Запоминает выстрел.
 
@@ -137,39 +138,38 @@ class User(Field):
                 next_shot = Shot(1, column)
                 if next_shot in self.shots:
                     next_shot = self.saved_shot
-                self.direction = 'up'
+                self.direction = "up"
             elif row == 9:
                 next_shot = Shot(8, column)
                 if next_shot in self.shots:
                     next_shot = self.saved_shot
-                self.direction = 'down'
+                self.direction = "down"
             else:
-                if self.direction == 'up':
+                if self.direction == "up":
                     next_shot = Shot(row + 1, column)
-                elif self.direction == 'down':
+                elif self.direction == "down":
                     next_shot = Shot(row - 1, column)
                 else:
                     if self.saved_shot is None:
                         option1 = Shot(row + 1, column)
                         option2 = Shot(row - 1, column)
                         chosen = random.choice([option1, option2])
-                        self.saved_shot = option2 if chosen == option1 else option1
-                        self.direction = 'up' if chosen == option1 else 'down'
+                        self.saved_shot = (
+                            option2 if chosen == option1 else option1
+                        )
+                        self.direction = "up" if chosen == option1 else "down"
                         next_shot = chosen
                         return next_shot
                     else:
                         next_shot = self.saved_shot
-                        if self.direction == 'isup':
+                        if self.direction == "isup":
                             next_shot.row += 1
-                            self.direction = 'up'
+                            self.direction = "up"
                         else:
                             next_shot.row -= 1
-                            self.direction = 'down'
+                            self.direction = "down"
 
-            if (
-                next_shot in self.remembered_shots
-                or next_shot in self.shots
-            ):
+            if next_shot in self.remembered_shots or next_shot in self.shots:
                 next_shot = self.saved_shot
 
         else:
@@ -194,7 +194,8 @@ class User(Field):
             d3 = Shot(row2 + 1, column - 1)
             d4 = Shot(row2 + 1, column + 1)
             diagonals = [
-                x for x in [d1, d2, d3, d4]
+                x
+                for x in [d1, d2, d3, d4]
                 if 0 <= x.row <= 9 and 0 <= x.column <= 9
             ]
             self.remembered_shots.update(diagonals)
@@ -203,8 +204,9 @@ class User(Field):
             row = random.randint(0, 9)
             column = random.randint(0, 9)
             next_shot = Shot(row, column)
-            while (next_shot in self.remembered_shots
-                   or next_shot in self.shots):
+            while (
+                next_shot in self.remembered_shots or next_shot in self.shots
+            ):
                 row = random.randint(0, 9)
                 column = random.randint(0, 9)
                 next_shot = Shot(row, column)

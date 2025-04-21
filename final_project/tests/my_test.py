@@ -1,7 +1,7 @@
 import pytest
 
-from final_project.my_classes import Tank, Shot, User
-from final_project.my_functions import check_tank_coordinate, check_hit
+from final_project.my_classes import Shot, Tank, User
+from final_project.my_functions import check_hit, check_tank_coordinate
 
 
 @pytest.fixture
@@ -83,4 +83,4 @@ def test_check_tank_coordinate(coordinate, expression, result):
     ],
 )
 def test_check_hit(make_tanks, shot, result):
-    assert check_hit(shot, make_tanks, 'tank')[0] == result
+    assert check_hit(shot, make_tanks, "tank")[0] == result

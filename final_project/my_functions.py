@@ -1,8 +1,8 @@
 import random
-import sys
 import re
+import sys
 
-from final_project.my_classes import Shot, Tank, User, Computer
+from final_project.my_classes import Computer, Shot, Tank, User
 
 coordinates_dict = {
     "а": 0,
@@ -57,11 +57,13 @@ def converted_coords(coords: list[str]) -> list:
         Список в формате ((кор1, кор2), колонка).
     """
     result = []
-    english = 'abcdefghijklmnopqrstuvwxyz' # noqa
-    pattern = r'^([a-я])(\d+)(?:([a-я])(\d+))?$'
+    english = "abcdefghijklmnopqrstuvwxyz"  # noqa
+    pattern = r"^([a-я])(\d+)(?:([a-я])(\d+))?$"
 
     if len(coords) != 10:
-        raise ValueError(f"Неверное количество координат танка - {len(coords)}")
+        raise ValueError(
+            f"Неверное количество координат танка - {len(coords)}"
+        )
 
     for coord in coords:
         if re.fullmatch(pattern, coord) is None:
@@ -69,7 +71,9 @@ def converted_coords(coords: list[str]) -> list:
 
         match = re.fullmatch(pattern, coord)
         row1 = int(match.group(2)) - 1  # Первая координата.
-        row2 = int(match.group(4)) - 1 if match.group(4) else row1  # Вторая координата.
+        row2 = (
+            int(match.group(4)) - 1 if match.group(4) else row1
+        )  # Вторая координата.
         if row1 > row2:
             row1, row2 = row2, row1
         col1 = match.group(1)
@@ -77,9 +81,13 @@ def converted_coords(coords: list[str]) -> list:
 
         if col1 in english or col2 in english:
             raise ValueError("Координаты танка должны быть на русском языке.")
-        elif (col1 not in coordinates_dict.values() or
-                col2 not in coordinates_dict.values()):
-            raise ValueError("Координаты танка должны быть в пределах от 'a' до 'к'.")
+        elif (
+            col1 not in coordinates_dict.values()
+            or col2 not in coordinates_dict.values()
+        ):
+            raise ValueError(
+                "Координаты танка должны быть в пределах от 'a' до 'к'."
+            )
         elif col1 != col2:
             raise ValueError("Координаты танка должны быть в одной колонке.")
         elif row1 not in range(10) or row2 not in range(10):
@@ -92,7 +100,7 @@ def converted_coords(coords: list[str]) -> list:
 
 
 def check_tank_coordinate(
-        searched_coord: Tank, coordinates: list[Tank]
+    searched_coord: Tank, coordinates: list[Tank]
 ) -> (bool, str | Tank):
     """Проверяет корректность координаты танка на поле.
 
@@ -117,36 +125,33 @@ def check_tank_coordinate(
         r1 = searched_coord.rows[0] + 1
         r2 = searched_coord.rows[1] + 1
         c = coordinates_dict[searched_coord.column]
-        t1 = (f'{c}{r1}{c}{r2}' if r1 != r2
-              else f'{c}{r1}')
+        t1 = f"{c}{r1}{c}{r2}" if r1 != r2 else f"{c}{r1}"
         # Координаты второго танка.
         r1 = rows[0] + 1
         r2 = rows[1] + 1
         c = coordinates_dict[column]
-        t2 = (f'{c}{r1}{c}{r2}' if r1 != r2
-              else f'{c}{r1}')
+        t2 = f"{c}{r1}{c}{r2}" if r1 != r2 else f"{c}{r1}"
 
-        if (searched_coord == coord
-                and coordinates.count(coord) > 1):
+        if searched_coord == coord and coordinates.count(coord) > 1:
             error = f"Танк {t1} уже есть на поле."
             return False, error
-        elif (searched_coord == coord
-              and coordinates.count(coord) <= 1):
+        elif searched_coord == coord and coordinates.count(coord) <= 1:
             continue
 
-        if (searched_coord.rows[0] - 1 <= rows[1]
-                and searched_coord.rows[1] + 1 >= rows[0]
-                and searched_coord.column - 1
-                <= column
-                <= searched_coord.column + 1):
+        if (
+            searched_coord.rows[0] - 1 <= rows[1]
+            and searched_coord.rows[1] + 1 >= rows[0]
+            and searched_coord.column - 1
+            <= column
+            <= searched_coord.column + 1
+        ):
             error = f"Танки {t1} и {t2} соприкасаются."
             return False, error
 
     return True, Tank
 
 
-def check_tanks_coordinates(coordinates: list,
-                            field: User | Computer) -> bool:
+def check_tanks_coordinates(coordinates: list, field: User | Computer) -> bool:
     """Проверяет корректность координат танков на поле.
 
     Args:
@@ -163,7 +168,7 @@ def check_tanks_coordinates(coordinates: list,
             print(check[1])
             return False
         elif field.placement[length] == 0:
-            print(f'Превышено количество танков длиной {length}.')
+            print(f"Превышено количество танков длиной {length}.")
             return False
         field.placement[length] -= 1
 
@@ -191,8 +196,8 @@ def check_hit(shot: Shot, field: User | Computer, kind: str) -> tuple:
         arr = field.tanks
         for coord in arr:
             if (
-                    coord.rows[0] <= shot.row <= coord.rows[1]
-                    and coord.column == shot.column
+                coord.rows[0] <= shot.row <= coord.rows[1]
+                and coord.column == shot.column
             ):
                 return True, coord
     elif kind == "shot":
@@ -280,10 +285,10 @@ def create_tanks(tanks_list: list, placement: dict):
             (coord1, coord2), column
         )  # Создание координаты танка.
         while (
-                not check_tank_coordinate(tank_coord, tanks_list)[0]
-                or coord2 - coord1 + 1 > 5
-                or tank_coord in tanks_list
-                or placement[tank_coord.length] == 0
+            not check_tank_coordinate(tank_coord, tanks_list)[0]
+            or coord2 - coord1 + 1 > 5
+            or tank_coord in tanks_list
+            or placement[tank_coord.length] == 0
         ):
             x = [random.randint(0, 9) for _ in range(2)]
             coord1 = min(x)  # Первая координата.
@@ -308,8 +313,8 @@ def check_destroyed_tank(field: User | Computer, shot: Shot) -> tuple:
         Кортеж, содержащий логический тип и объект танка.
         True - если танк был уничтожен. False - если нет.
     """
-    if check_hit(shot, field, 'tank')[0]:
-        tank = check_hit(shot, field, 'tank')[1]
+    if check_hit(shot, field, "tank")[0]:
+        tank = check_hit(shot, field, "tank")[1]
         for row in range(tank.rows[0], tank.rows[1] + 1):
             if field.data[row][shot.column] == "✘":
                 continue
@@ -320,7 +325,9 @@ def check_destroyed_tank(field: User | Computer, shot: Shot) -> tuple:
         return False, None
 
 
-def check_input(user_input: str | list, kind: str, field: User | Computer) -> bool:
+def check_input(
+    user_input: str | list, kind: str, field: User | Computer
+) -> bool:
     """
     Проверяет корректность ввода игрока.
     Некорректным вводом считается:
@@ -344,8 +351,8 @@ def check_input(user_input: str | list, kind: str, field: User | Computer) -> bo
     Returns:
         True - если выстрел корректный, False - если нет.
     """
-    if kind == 'shot':
-        if user_input == 'подсказка':
+    if kind == "shot":
+        if user_input == "подсказка":
             return False
         if field is None:
             raise ValueError("Вы не указали аргумент 'field'")
@@ -362,18 +369,21 @@ def check_input(user_input: str | list, kind: str, field: User | Computer) -> bo
             and 1 <= int(column) <= 10
             and row in coordinates_dict
         ):
-            user_shot = Shot(int(column) - 1, coordinates_dict[row], )
+            user_shot = Shot(
+                int(column) - 1,
+                coordinates_dict[row],
+            )
             if user_shot in field.shots:
                 print("Вы уже стреляли по этой клетке!")
             elif user_shot in field.remembered_shots:
                 print("В этой клетке точно нет танка!")
-            elif not check_hit(user_shot, field, 'shot')[0]:
+            elif not check_hit(user_shot, field, "shot")[0]:
                 return True
         else:
             print("Неправильный ввод!")
 
         return False
-    elif kind == 'tank':
+    elif kind == "tank":
         try:
             tanks = converted_coords(user_input)
         except ValueError as ex:  # noqa

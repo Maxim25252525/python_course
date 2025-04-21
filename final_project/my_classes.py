@@ -25,6 +25,9 @@ class Shot:
         self.column = column  # Индекс столбца, куда произведен выстрел.
         self.hit: bool = False  # Признак попадания.
 
+    def __hash__(self):
+        return hash((self.row, self.column))
+
     def __eq__(self, other):
         if not isinstance(other, Shot):
             return False
@@ -53,7 +56,7 @@ class Field:
     def __init__(self):
         # Заполнение пустого поля.
         self.data = [
-            [CELL_DESIGN["empty"] for column in range(10)] for row in range(10)
+            [CELL_DESIGN["empty"] for _ in range(10)] for _ in range(10)
         ]
         self.tanks: list[Tank] = []
         self.shots: list[Shot] = []
@@ -86,6 +89,7 @@ class User(Field):
         super().__init__()
         self.saved_shot: Shot | None = None
         self.direction: str | None = None
+        self.remembered_shots = set()
 
     def fill_field(self):
         """Заполняет поле условными символами."""
@@ -99,39 +103,45 @@ class User(Field):
                 CELL_DESIGN["hit"] if shot.hit else CELL_DESIGN["miss"]
             )
 
-    def remember_shot(self, shot: Shot, destroyed: bool):
+    def remember_shot(self, shot: Shot, destroyed: bool,
+                      tank: Tank | None = None) -> Shot:
         """
         Запоминает выстрел.
 
         Args:
             shot: Выстрел.
             destroyed: Признак уничтожения танка.
+            tank: Танк.
+            (Указывается только при уничтожении танка).
+
+        Returns:
+            Следующий выстрел.
         """
-        # TODO: Если сохраняется одно число, то оно не сохраняется до
-        #  следующего вызова, но сохраняется в main как-то, иначе
-        #  первое число сохраняется где-то в main, а второе сохраняется
-        #  до следующего вызова.
+        row = shot.row
+        column = shot.column
+
+        # Заполняем клетки, в которых точно нет танка.
+        if column == 0:
+            self.remembered_shots.add(Shot(row, column + 1))
+            shot.hit = True
+        elif column == 9:
+            self.remembered_shots.add(Shot(row, column - 1))
+            shot.hit = True
+        else:
+            self.remembered_shots.add(Shot(row, column - 1))
+            self.remembered_shots.add(Shot(row, column + 1))
+
         if not destroyed:
-            row = shot.row
-            column = shot.column
-
-            # Заполняем клетки, в которых точно нет танка.
-            if column == 0:
-                self.remembered_shots.append(Shot(row, column + 1))
-            elif column == 9:
-                self.remembered_shots.append(Shot(row, column - 1))
-            else:
-                self.remembered_shots.append(Shot(row, column - 1))
-                self.remembered_shots.append(Shot(row, column + 1))
-
-            self.shots.append(shot)  # Добавляем выстрел компьютера в список.
-
             # Возвращаем клетку, в который может быть танк.
             if row == 0:
                 next_shot = Shot(1, column)
+                if next_shot in self.shots:
+                    next_shot = self.saved_shot
                 self.direction = 'up'
             elif row == 9:
                 next_shot = Shot(8, column)
+                if next_shot in self.shots:
+                    next_shot = self.saved_shot
                 self.direction = 'down'
             else:
                 if self.direction == 'up':
@@ -146,18 +156,55 @@ class User(Field):
                         self.saved_shot = option2 if chosen == option1 else option1
                         self.direction = 'up' if chosen == option1 else 'down'
                         next_shot = chosen
+                        return next_shot
                     else:
                         next_shot = self.saved_shot
-                        self.saved_shot = (
-                            Shot(row + 1, column) if self.direction == 'isup'
-                            else Shot(row - 1, column) if self.direction == 'isdown'
-                            else None
-                        )
+                        if self.direction == 'isup':
+                            next_shot.row += 1
+                            self.direction = 'up'
+                        else:
+                            next_shot.row -= 1
+                            self.direction = 'down'
 
-            return next_shot
         else:
             self.direction = None
             self.saved_shot = None
+
+            # Запомнили клетки снизу и сверху, в которых точно нет танка.
+            length = tank.length
+            row1 = tank.rows[0]
+            row2 = tank.rows[1]
+            if row == 0:
+                self.remembered_shots.add(Shot(row + length, column))
+            elif row == 9:
+                self.remembered_shots.add(Shot(row - length, column))
+            else:
+                self.remembered_shots.add(Shot(row1 - 1, column))
+                self.remembered_shots.add(Shot(row2 + 1, column))
+
+            # Запомнили диагональные клетки, в которых точно нет танка.
+            d1 = Shot(row1 - 1, column - 1)
+            d2 = Shot(row1 - 1, column + 1)
+            d3 = Shot(row2 + 1, column - 1)
+            d4 = Shot(row2 + 1, column + 1)
+            diagonals = [
+                lambda x: x in [d1, d2, d3, d4]
+                if 0 <= x.row <= 9 and 0 <= x.column <= 9
+                else None
+            ]
+            self.remembered_shots.update(diagonals)
+
+            # Придумали новый выстрел.
+            row = random.randint(0, 9)
+            column = random.randint(0, 9)
+            next_shot = Shot(row, column)
+            while (next_shot in self.remembered_shots
+                   or next_shot in self.shots):
+                row = random.randint(0, 9)
+                column = random.randint(0, 9)
+                next_shot = Shot(row, column)
+
+        return next_shot
 
 
 class Computer(Field):
@@ -176,6 +223,7 @@ class Computer(Field):
         remembered_shots: Список выстрелов, которые не будут отображаться,
         но будут запомнены.
     """
+
     def __init__(self, show: bool):
         """
         Инициализирует поле компьютера.

@@ -11,8 +11,8 @@ if __name__ == "__main__":
         sep="\n",
     )
 
-    command = conv_cmd(input("> "))
-    # command = 'старт'
+    # command = conv_cmd(input("> "))
+    command = 'старт'
     check_exit(command)
     while True:
         match command:
@@ -57,12 +57,13 @@ if __name__ == "__main__":
                 print_fields(user_field, computer_field)
 
                 # Создаем танки для игрока.
-                # Танчики: а8а10 б3 б6 в1 в9в10 г5г7 д2д3 ж4ж7 з1з2 к3к7
+                # Танчики: а8а10 б3 б6 в1 в9в10 г5г7 д2д3 ж4ж7 з1з2 к6к10
                 sleep(0.5)
-                command = conv_cmd(
-                    input("Введите координаты ваших танков через пробел: ")
-                )
-                check_exit(command)
+                # command = conv_cmd(
+                #     input("Введите координаты ваших танков через пробел: ")
+                # )
+                # check_exit(command)
+                command = 'а8а10 б3 б6 в1 в9в10 г5г7 д2д3 ж4ж7 з1з2 к6к10'
                 tanks = command.split()
                 while not check_input(tanks, 'tank', user_field):
                     sleep(0.5)
@@ -119,8 +120,7 @@ if __name__ == "__main__":
                         )
                         # Проверяем, попали в танк или нет.
                         if (
-                            computer_field.data[user_shot.row][user_shot.column]
-                            == "▣"
+                            check_hit(user_shot, computer_field, 'tank')[0]
                         ):
                             user_shot.hit = True
                             computer_field.shots.append(user_shot)
@@ -137,9 +137,16 @@ if __name__ == "__main__":
                                     ):
                                         tank_id = i
                                         break
-                                computer_field.tanks.pop(tank_id)
+
+                                d_tank = user_field.tanks[tank_id]  # Уничтоженный танк.
+                                r1 = d_tank.rows[0] + 1
+                                r2 = d_tank.rows[1] + 1
+                                col = coordinates_dict[d_tank.column]
+                                small = True if r1 == r2 else False
+                                d_tank = (f'{col}{r1}' if small
+                                          else f'{col}{r1}{col}{r2}')
                                 sleep(0.5)
-                                input("Вражеский танк уничтожен! ")
+                                input(f"Вражеский танк {d_tank} уничтожен! ")
                             else:
                                 sleep(0.5)
                                 input("Вы попали! ")
@@ -154,24 +161,40 @@ if __name__ == "__main__":
                     else:
                         print()
                         print("Ход компьютера!")
-                        x = random.randint(0, 9)
-                        y = random.randint(0, 9)
+                        # x = random.randint(0, 9)
+                        # y = random.randint(0, 9)
+                        x = 8
+                        y = 9
                         computer_shot = Shot(x, y)
                         # Проверяем, был ли выстрел ранее по этой клетке.
-                        while check_hit(computer_shot, computer_field, 'shot')[0]:
+                        while (
+                                check_hit(computer_shot, user_field, 'shot')[0]
+                                or computer_shot in user_field.remembered_shots
+                        ):
                             x = random.randint(0, 9)
                             y = random.randint(0, 9)
                             computer_shot = Shot(x, y)
                         sleep(0.5)
-                        print(f'Противник бьет по {coordinates_dict[y]}{x+1}:')
-
-                        # Проверяем, попали в танк или нет.
-                        while (
-                                check_hit(computer_shot, user_field, 'tank')[0]
-                        ):
+                        if user_field.saved_shot is None:
+                            print(f'Противник бьет по {coordinates_dict[y]}{x + 1}:')
+                            if check_hit(computer_shot, user_field, 'tank')[0]:
+                                computer_shot.hit = True
+                                user_field.shots.append(computer_shot)
+                                print_fields(user_field, computer_field)
+                            else:
+                                computer_shot.hit = False
+                                user_field.shots.append(computer_shot)
+                        else:
+                            computer_shot = user_field.saved_shot
                             computer_shot.hit = True
+                            user_field.shots.append(computer_shot)
+                            y = computer_shot.column
+                            x = computer_shot.row
+                            print(f'Противник бьет по {coordinates_dict[y]}{x + 1}:')
                             print_fields(user_field, computer_field)
-                            # Проверяем, уничтожен ли танк.
+
+                        while check_hit(computer_shot, user_field, 'tank')[0]:
+                            # Танк уничтожен.
                             if check_destroyed_tank(user_field, computer_shot)[0]:
                                 tank_id = 0
                                 for i, tank in enumerate(computer_field.tanks):
@@ -184,24 +207,61 @@ if __name__ == "__main__":
                                         tank_id = i
                                         break
 
-                                user_field.remember_shot(computer_shot, True)
+                                d_tank = user_field.tanks[tank_id]  # Уничтоженный танк.
+
+                                # Запомнили выстрел и придумали новый.
+                                computer_shot = user_field.remember_shot(
+                                    computer_shot, True, d_tank)
                                 user_field.tanks.pop(tank_id)
+
+                                r1 = d_tank.rows[0] + 1
+                                r2 = d_tank.rows[1] + 1
+                                col = coordinates_dict[d_tank.column]
+                                small = True if r1 == r2 else False
+                                d_tank = (f'{col}{r1}' if small
+                                          else f'{col}{r1}{col}{r2}')
                                 sleep(0.5)
-                                input("Ваш танк уничтожен! ")
+                                input(f"Ваш танк {d_tank} уничтожен! ")
+                                print()
+                                print("Ход компьютера!")
+                                sleep(0.5)
+                                x = computer_shot.row
+                                y = computer_shot.column
+                                print(f'Противник бьет по {coordinates_dict[y]}{x + 1}:')
+                                if check_hit(computer_shot, user_field, 'tank')[0]:
+                                    computer_shot.hit = True
+                                    user_field.shots.append(computer_shot)
+                                    print_fields(user_field, computer_field)
+
+                            # В танк попали.
                             else:
+                                # Запомнили выстрел и придумали новый.
                                 sleep(0.5)
                                 input("По вашему танку попали! ")
                                 print()
                                 print("Ход компьютера!")
                                 computer_shot = user_field.remember_shot(computer_shot, False)
                                 sleep(0.5)
-                                print(f'Противник бьет по {coordinates_dict[y]}{x + 1}:')
-                                print_fields(user_field, computer_field)
+                                x = computer_shot.row
+                                y = computer_shot.column
+                                if check_hit(computer_shot, user_field, 'tank')[0]:
+                                    computer_shot.hit = True
+                                    user_field.shots.append(computer_shot)
+                                    print(f'Противник бьет по {coordinates_dict[y]}{x + 1}:')
+                                    print_fields(user_field, computer_field)
+
+                        # В танк не попали.
                         else:
                             user_field.shots.append(computer_shot)
                             if user_field.direction == 'up':
+                                y = computer_shot.column
+                                x = computer_shot.row
+                                print(f'Противник бьет по {coordinates_dict[y]}{x + 1}:')
                                 user_field.direction = 'isdown'
                             elif user_field.direction == 'down':
+                                y = computer_shot.column
+                                x = computer_shot.row
+                                print(f'Противник бьет по {coordinates_dict[y]}{x + 1}:')
                                 user_field.direction = 'isup'
                             print_fields(user_field, computer_field)
                             sleep(0.5)

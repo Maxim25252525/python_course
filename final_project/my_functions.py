@@ -229,7 +229,7 @@ def tip(field: Computer):
         # Трансформация индексов в координату.
         x += 1
         y = coordinates_dict[y]
-        field.shots.append(player_shot)
+        field.remember_shot(player_shot)
         print(
             "Правильно!",
             f"Ваша подсказка: в клетке {y}{x} нет танка!",
@@ -351,16 +351,20 @@ def check_input(user_input: str | list, kind: str, field: User | Computer) -> bo
 
         row = user_input[0]
         column = user_input[1:]
-        if (row.isalpha()
-                and 2 <= len(user_input) <= 3
-                and column.isdigit()
-                and 1 <= int(column) <= 10
-                and row in coordinates_dict):
+        if (
+            row.isalpha()
+            and 2 <= len(user_input) <= 3
+            and column.isdigit()
+            and 1 <= int(column) <= 10
+            and row in coordinates_dict
+        ):
             user_shot = Shot(int(column) - 1, coordinates_dict[row], )
-            if not check_hit(user_shot, field, 'shot')[0]:
-                return True
-            else:
+            if user_shot in field.shots:
                 print("Вы уже стреляли по этой клетке!")
+            elif user_shot in field.remembered_shots:
+                print("В этой клетке точно нет танка!")
+            elif not check_hit(user_shot, field, 'shot')[0]:
+                return True
         else:
             print("Неправильный ввод!")
 

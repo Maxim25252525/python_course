@@ -1,4 +1,5 @@
 import random
+from copy import deepcopy as dp
 
 CELL_DESIGN = {"empty": "▢", "tank": "▣", "miss": "◼", "hit": "✘"}
 
@@ -161,7 +162,7 @@ class User(Field):
                         next_shot = chosen
                         return next_shot
                     else:
-                        next_shot = self.saved_shot
+                        next_shot = dp(self.saved_shot)
                         if self.direction == "isup":
                             next_shot.row += 1
                             self.direction = "up"
@@ -170,7 +171,18 @@ class User(Field):
                             self.direction = "down"
 
             if next_shot in self.remembered_shots or next_shot in self.shots:
-                next_shot = self.saved_shot
+                if self.saved_shot in self.shots:
+                    row = random.randint(0, 9)
+                    column = random.randint(0, 9)
+                    next_shot = Shot(row, column)
+                    while (
+                            next_shot in self.remembered_shots or next_shot in self.shots
+                    ):
+                        row = random.randint(0, 9)
+                        column = random.randint(0, 9)
+                        next_shot = Shot(row, column)
+                else:
+                    next_shot = self.saved_shot
 
         else:
             self.direction = None

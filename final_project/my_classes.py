@@ -176,7 +176,8 @@ class User(Field):
                     column = random.randint(0, 9)
                     next_shot = Shot(row, column)
                     while (
-                            next_shot in self.remembered_shots or next_shot in self.shots
+                            next_shot in self.remembered_shots
+                            or next_shot in self.shots
                     ):
                         row = random.randint(0, 9)
                         column = random.randint(0, 9)
